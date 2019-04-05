@@ -1,0 +1,19 @@
+{
+  "name": "rx-in-space",
+  "version": "1.0.0",
+  "description": "Reactive extensions with grouping capabilities",
+  "main": "dist/typescript/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tdip/rx-in-space.git"
+  },
+  "author": "Turning Data Into Products <hello@quantifio.no>",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/tdip/rx-in-space/issues"
+  },
+  "homepage": "https://github.com/tdip/rx-in-space#readme"
+}
