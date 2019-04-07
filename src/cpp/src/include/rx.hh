@@ -1,7 +1,7 @@
 #pragma once
 
 #include "rxcpp/rx.hpp"
-namespace Rx {
+namespace rx {
     using namespace rxcpp;
     using namespace rxcpp::sources;
     using namespace rxcpp::operators;

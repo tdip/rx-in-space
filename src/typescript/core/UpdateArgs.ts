@@ -17,7 +17,7 @@ export type OutputSet = {
  */
 export type SetValue = {
     values: Observable<any>,
-    key: OutputSet
+    output: OutputSet
 }
 
 /**
