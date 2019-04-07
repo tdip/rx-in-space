@@ -7,17 +7,19 @@
 #include "core/OutputSet.hh"
 
 #include "store/IReactiveNode.hh"
-#include "store/IReactiveNodeSource.hh"
 #include "store/IReactiveNodeStream.hh"
 #include "store/Property.hh"
 #include "store/QueryInstance.hh"
-#include "store/ReactiveNode.hh"
+#include "store/ReactiveNodeEntry.hh"
+#include "store/QueryContext.hh"
 
 namespace rx::space::store{
 
     using Key = std::set<Property>;
 
     Key fromQuery(const core::QueryArgs&);
+
+    Key fromOutputSet(const core::OutputSet&);
 
     class ReactiveNodeCollection{
     public:
@@ -37,10 +39,12 @@ namespace rx::space::store{
          * meaning that if a source for the node already exits,
          * it will be replaced with this source.
          */
-        void update(core::OutputSet&&, IReactiveNodeSource&);
+        //void update(core::OutputSet&&, IReactiveNodeSource&);
+    private:
+        QueryContext queryContext(core::QueryArgs&);
 
     private:
-        std::map<Key, ReactiveNodeWPtr> reactiveNodes;
+        std::map<Key, ReactiveNodeEntry> reactiveNodes;
         std::map<Key, QueryInstanceWPtr> reactiveQueries;
     };
 }

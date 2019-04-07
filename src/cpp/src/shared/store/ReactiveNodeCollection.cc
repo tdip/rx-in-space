@@ -21,21 +21,18 @@ namespace rx::space::store{
         return std::move(key);
     }
 
-    IReactiveNodeStreamPtr ReactiveNodeCollection::query(core::QueryArgs&& query){
+    QueryContext ReactiveNodeCollection::queryContext(core::QueryArgs& query){
 
-        std::vector<std::shared_ptr<ReactiveNode>> queryNodes;
-
+        QueryContext context;
         for(auto&& node = reactiveNodes.begin(); node != reactiveNodes.end(); node++){
 
-            std::shared_ptr<ReactiveNode> entry = node->second.lock();
-            if(entry && entry->matches(query.query)){
-                queryNodes.push_back(entry);
+            ReactiveNodeEntry& entry = node->second;
+
+            if(entry.matches(query)){
+                context.addNodeInstance(entry.activate());
             }
         }
 
-        const QueryInstancePtr instance = std::make_shared<QueryInstance>(query, std::move(queryNodes));
-        const Key key = fromQuery(query);
-        reactiveQueries[key] = instance;
-        return std::make_shared<ReactiveNodeStream>(instance);
+        return context;
     }
 }

@@ -2,4 +2,7 @@
 
 namespace rx::space::topology{
 
+    void ReactiveTopology::update(core::SetValue&&){
+        nodeSet.
+    }
 }

@@ -7,11 +7,11 @@
 
 namespace rx::space::core{
 
-    using QueryProperty = std::variant<std::string, std::vector<std::string>>;
+    using QueryPredicate = std::variant<std::string>;
 
     /**
     * Type that describes a set of reactive values that
     * exists within a reactive space.
     */ 
-    using QuerySet = std::map<std::string, QueryProperty>;
+    using QuerySet = std::map<std::string, QueryPredicate>;
 }
