@@ -15,7 +15,7 @@
 
 namespace rx::space::store{
 
-    using OnValueNext = std::function<void(core::IValuePtr); 
+    using OnValueNext = std::function<void(core::IValuePtr)>;
 
     class IReactiveNode{
     public:
@@ -38,7 +38,7 @@ namespace rx::space::store{
          */
         virtual rx::composite_subscription subscribe(
             IReactiveQuerySpace&,
-            OnValueNext&> = 0;
+            OnValueNext&&) = 0;
     };
 
     using IReactiveNodePtr = std::unique_ptr<IReactiveNode>;

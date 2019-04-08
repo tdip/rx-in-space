@@ -12,11 +12,11 @@
 #include "store/IReactiveNode.hh"
 #include "store/ReactiveNodeInstance.hh"
 
-#include "util/Disposable.hh"
+#include "util/ObservableSubjectBase.hh"
 
 namespace rx::space::store{
 
-    using ReactiveNodeEntryDispose = util::Disposable<std::function<void()>>;
+    using ReactiveNodeEntrySubject = util::ObservableSubject<core::ContextPtr, std::function<void()>, std::function<void()>>;
 
     /**
      * Wrapper class to store reactive nodes
@@ -51,46 +51,42 @@ namespace rx::space::store{
         void setNode(IReactiveNodePtr&&);
 
     private:
-        /**
-         * Counter to generate unique identifiers to all
-         * subscribers to this node entry.
-         */
-        long idCount;
+
 
         /**
          * The query-space instance that used by this
          * node entry to subscribe to other values
          * in the query space.
          */
-        IReactiveQuerySpacePtr space;
+        const IReactiveQuerySpacePtr space;
 
         /**
-         * The subscriptions in this query space.
+         * Holds the active (if any) subscription with the reactive node
          */
-        std::unordered_map<long, rx::subscriber<core::ContextPtr>> subscriptions;
-
-        /**
-         * Lambda function that wraps around the 'onSubscribe' method to make
-         * it easier to construct an observable with it.
-         */
-        const std::function<void(const rx::subscriber<core::ContextPtr>&)> subscribe;
-
-        /**
-         * Permanent observable for a particualr output set. Regardles of nodes
-         * being changed. This observable will always yield the latest value
-         * of the node.
-         */
-        const rx::observable<core::ContextPtr> observable;
-
         rx::composite_subscription activeNodeSubscription;
-        std::weak_ptr<ReactiveNodeEntryDispose> dispose;
+
+        /**
+         * The current node that provides values to the set
+         * corresponding to this node entry.
+         */
         IReactiveNodePtr activeNode;
 
-        void onSubscribe(const rx::subscriber<core::ContextPtr>&);
+        /**
+         * The subject used to manage the subscriptions to this entry.
+         * It will activate the node when subscribers appear and
+         * dispose it when all subscribers are gone.
+         */
+        ReactiveNodeEntrySubject subject;
+
+        /**
+         * Called whenever the underlying node produces a value. This
+         * simply takes the value from the node, constructs the node
+         * Context and passes the resulting value to the observable
+         * of the node entry.
+         */
+        void onNodeValue(core::IValuePtr);
 
         bool unsubscribeNode();
-
-        std::shared_ptr<ReactiveNodeEntryDispose> subscribeToNode();
 
         void activateSubscriptionToNode();
     };
