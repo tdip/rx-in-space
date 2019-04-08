@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 namespace rx::space::core{
 
     /**
@@ -9,4 +11,6 @@ namespace rx::space::core{
      * space.
      */
     class Context{};
+
+    using ContextPtr = std::shared_ptr<Context>;
 }

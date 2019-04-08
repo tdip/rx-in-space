@@ -1,10 +1,12 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <vector>
 
 #include "rx.hh"
 
+#include "core/OutputSet.hh"
 #include "core/QueryArgs.hh"
 #include "core/QuerySet.hh"
 #include "core/IValue.hh"
@@ -13,12 +15,7 @@
 
 namespace rx::space::store{
 
-    class IReactiveNodeSubscription{
-        public:
-        virtual ~IReactiveNodeSubscription() = 0;
-    };
-
-    using IReactiveNodeSubscriptionPtr = std::unique_ptr<IReactiveNodeSubscription>;
+    using OnValueNext = std::function<void(core::IValuePtr); 
 
     class IReactiveNode{
     public:
@@ -39,7 +36,9 @@ namespace rx::space::store{
          * when there are no more queries that match it's output set.
          * This value will get destroyed when such event happens.
          */
-        virtual IReactiveNodeSubscriptionPtr subscribe(IReactiveQuerySpace&, std::vector<rx::observer<core::IValue>>) = 0;
+        virtual rx::composite_subscription subscribe(
+            IReactiveQuerySpace&,
+            OnValueNext&> = 0;
     };
 
     using IReactiveNodePtr = std::unique_ptr<IReactiveNode>;
