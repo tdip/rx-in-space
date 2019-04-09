@@ -9,7 +9,6 @@
 #include "store/IReactiveNode.hh"
 #include "store/IReactiveNodeStream.hh"
 #include "store/Property.hh"
-#include "store/QueryInstance.hh"
 #include "store/ReactiveNodeEntry.hh"
 #include "store/QueryContext.hh"
 
@@ -41,10 +40,19 @@ namespace rx::space::store{
          */
         //void update(core::OutputSet&&, IReactiveNodeSource&);
     private:
-        QueryContext queryContext(core::QueryArgs&);
 
-    private:
+        /**
+         * Create the context required to observe values of
+         * the set matching the given query. The <isWeak>
+         * argument determines wether the observables inside
+         * the context will remain active as long as the
+         * context is alive or whether this context plays
+         * no role determining if the observables of itself
+         * are active or not.
+         */
+        QueryContextPtr queryContext(bool isWeak, core::QueryArgs&);
+
         std::map<Key, ReactiveNodeEntry> reactiveNodes;
-        std::map<Key, QueryInstanceWPtr> reactiveQueries;
+        //std::map<Key, QueryInstanceWPtr> reactiveQueries;
     };
 }

@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "store/IReactiveNodeStream.hh"
-#include "store/QueryInstance.hh"
 
 namespace rx::space::store{
 

@@ -37,8 +37,9 @@ namespace rx::space::store{
         return subject.isActive();
     }
 
-    ReactiveNodeInstance ReactiveNodeEntry::activate(){
+    ReactiveNodeInstancePtr ReactiveNodeEntry::activate(bool isWeak){
 
-        return ReactiveNodeInstance(subject.observable());
+        return std::make_unique<ReactiveNodeInstance>(
+            isWeak ? subject.observableWeak() : subject.observable());
     }
 }

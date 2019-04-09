@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "rx.hh"
 
 #include "core/Context.hh"
@@ -10,16 +12,25 @@ namespace rx::space::store{
 
     using ReactiveNodeInstanceSubject = util::ObservableSubject<core::ContextPtr, std::function<void()>, std::function<void()>>;
 
+    class ReactiveNodeInstance;
+
+    using ReactiveNodeInstancePtr = std::unique_ptr<ReactiveNodeInstance>;
+
     class ReactiveNodeInstance{
     public:
-        ReactiveNodeInstance(const rx::observable<core::ContextPtr>&);
+        ReactiveNodeInstance(rx::observable<core::ContextPtr>&&);
         ~ReactiveNodeInstance();
 
-        const rx::observable<core::ContextPtr>& observable() const;
+        rx::observable<core::ContextPtr> observable();
+
+        void onNext(core::ContextPtr& value);
+
+        static ReactiveNodeInstancePtr create(rx::observable<core::ContextPtr>&&){
+
+        }
 
     private:
-        const rx::composite_subscription nodeSubscription;
-        void onValue(core::ContextPtr& value);
         ReactiveNodeInstanceSubject subject;
+        const rx::composite_subscription nodeSubscription;
     };
 }

@@ -35,11 +35,13 @@ namespace rx::space::store{
          * the node are discarded, the node will
          * be deactivated to save resources.
          */
-        ReactiveNodeInstance activate();
+        ReactiveNodeInstancePtr activate(bool isWeak);
 
         /**
-         * Check whether a Query exactly matches
-         * this node.
+         * Check whether this node belongs to
+         * the set specified by the given
+         * Query and if all required properties
+         * are in the query.
          */
         bool matches(const core::QueryArgs&) const;
 

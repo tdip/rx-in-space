@@ -21,18 +21,18 @@ namespace rx::space::store{
         return std::move(key);
     }
 
-    QueryContext ReactiveNodeCollection::queryContext(core::QueryArgs& query){
+    QueryContextPtr ReactiveNodeCollection::queryContext(bool isWeak, core::QueryArgs& query){
 
-        QueryContext context;
+        std::vector<ReactiveNodeInstancePtr> nodes;
         for(auto&& node = reactiveNodes.begin(); node != reactiveNodes.end(); node++){
 
             ReactiveNodeEntry& entry = node->second;
 
             if(entry.matches(query)){
-                context.addNodeInstance(entry.activate());
+                nodes.push_back(entry.activate(isWeak));
             }
         }
 
-        return context;
+        return QueryContext::create(std::move(nodes));
     }
 }
