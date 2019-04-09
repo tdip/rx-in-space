@@ -9,10 +9,21 @@ namespace rx::space::util{
     template<typename F>
     class Disposable{
         public:
-        Disposable(F&& _dispose): dispose(_dispose) {}
-        ~Disposable(){ dispose(); }
+        Disposable(F&& _dispose): dispose(_dispose), hasBeenDisposed(false) {}
+
+        void runDispose(){
+
+            // todo: make thread safe
+            if(!hasBeenDisposed){
+                hasBeenDisposed = true;
+                dispose();
+            }
+        }
+
+        ~Disposable(){ runDispose(); }
 
         private:
+        bool hasBeenDisposed;
         const F dispose;
     };
 

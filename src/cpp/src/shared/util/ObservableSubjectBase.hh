@@ -28,6 +28,15 @@ namespace rx::space::util{
             subscribe([this](rx::subscriber<T> &ss) mutable { onSubscribe(ss); }),
             _observable(rx::create<T>(subscribe)) {};
 
+        virtual ~ObservableSubjectBase(){
+            subscriptions.clear();
+            auto wDispose = dispose.lock();
+
+            if(wDispose){
+                wDispose->runDispose();
+            }
+        }
+
         const rx::observable<T>& observable() const { return _observable; }
 
         bool isActive() const { return !dispose.expired(); }
@@ -108,12 +117,13 @@ namespace rx::space::util{
         
             const long id = idCount++;
             auto disposeRef = getActiveDisposer();
-            //std::function<void()> disposeCallback = 
 
             ss.add(
                 std::function<void()>(
                     [id, disposeRef, this]() mutable {
+                        printf("hahaha %d\n", subscriptions.size());
                         this->subscriptions.erase(id);
+                        printf("hohohoh %d\n", subscriptions.size());
                         disposeRef.reset();
                 }));
 
