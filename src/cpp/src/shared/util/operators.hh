@@ -11,17 +11,21 @@
 namespace rx::space::util{
 
     template<typename T>
-    class CombineLatestContext : public ObservableSubjectBaseContext<std::vector<T>>{
+    using CombineLatestValues = std::shared_ptr<std::vector<T>>;
+
+    template<typename T>
+    class CombineLatestContext : public ObservableSubjectBaseContext<CombineLatestValues<T>>{
 
         public:
         CombineLatestContext(
             const std::vector<observable<T>>& _observables) :
 
-            ObservableSubjectBaseContext<std::vector<T>>(),
-            observables(_observables),
-            mask(_observables.size()),
-            values(_observables.size()),
-            itemSubscriptions(_observables.size()){}
+            ObservableSubjectBaseContext<CombineLatestValues<T>>(),
+            observables(std::make_unique<std::vector<rx::observable<T>>>(_observables)),
+            mask(std::make_unique<std::vector<bool>>(_observables.size())),
+            values(std::make_unique<std::vector<T>>(_observables.size())),
+            itemSubscriptions(
+                std::make_unique<std::vector<rx::composite_subscription>>(_observables.size())){}
 
         virtual ~CombineLatestContext() override{
             onDeActivate();
@@ -29,17 +33,18 @@ namespace rx::space::util{
 
         protected:
         virtual void onActivate() override{
-            for(size_t i = 0; i < observables.size(); i++){
+            for(size_t i = 0; i < observables->size(); i++){
                 // It is ok to capture *this* since this subscriptions
                 // get discarded once the object is destroyed.
-                itemSubscriptions[i] = observables[i].subscribe([i, this](T v){ onNext(i, v); });
+                itemSubscriptions->operator[](i) = observables->operator[](i).subscribe(
+                    [i, this](T v){ onNext(i, v); });
             }
         }
 
         virtual void onDeActivate() override{
             for(
-                auto&& subscription = itemSubscriptions.begin();
-                subscription != itemSubscriptions.end();
+                auto&& subscription = itemSubscriptions->begin();
+                subscription != itemSubscriptions->end();
                 subscription++){
 
                 subscription->unsubscribe();
@@ -47,54 +52,60 @@ namespace rx::space::util{
         }
 
         private:
-        const std::vector<rx::observable<T>> observables;
-        std::vector<bool> mask;
-        std::vector<T> values;
-        std::vector<rx::composite_subscription> itemSubscriptions;
+        const std::unique_ptr<std::vector<rx::observable<T>>> observables;
+        const std::unique_ptr<std::vector<bool>> mask;
+        const std::unique_ptr<std::vector<T>> values;
+        const std::unique_ptr<std::vector<rx::composite_subscription>> itemSubscriptions;
 
-        void onNext(size_t i, T value){
+        void onNext(size_t i, T value) const{
 
-            mask[i] = true;
-            values[i] = value;
+            mask->operator[](i) = true;
+            values->operator[](i) = value;
 
-            for(auto&& item = mask.begin(); item != mask.end(); item++){
+            for(auto&& item = mask->begin(); item != mask->end(); item++){
                 if(!(*item)){
                     return;
                 }
             }
 
-            auto& subscriptions = ObservableSubjectBaseContext<std::vector<T>>::subscriptions;
+            auto& subscriptions = ObservableSubjectBaseContext<CombineLatestValues<T>>::subscriptions;
+            auto result = std::make_shared<std::vector<T>>(*values);
             for(
                 auto&& subscription = subscriptions.begin();
                 subscription != subscriptions.end();
                 subscription++){
 
-                subscription->second.on_next(values);
+                subscription->second.on_next(result);
             }
         }
-
     };
 
     template<typename T>
-    class CombineLatestSubject : public ObservableSubjectBase<std::vector<T>>{
+    class CombineLatestSubject : public ObservableSubjectBase<CombineLatestValues<T>>{
         public:
         CombineLatestSubject(const std::vector<observable<T>>& _observables) :
-            ObservableSubjectBase<std::vector<T>>(
+            ObservableSubjectBase<CombineLatestValues<T>>(
                 std::make_shared<CombineLatestContext<T>>(
                     _observables)) {}
     };
 
+    /**
+     * Given an array of observables of the same type, construct an array that
+     * contains all of the latest values of the observables in the inner array.
+     * It will return a shared_ptr to an array to avoid unecessary copying of
+     * the original array.
+     */
     template<typename T>
-    rx::observable<std::vector<T>> combineLatest(std::vector<rx::observable<T>>& oss){
+    rx::observable<CombineLatestValues<T>> combineLatest(std::vector<rx::observable<T>>& oss){
 
-        return rx::create<std::vector<T>>(
-            std::function<void(rx::subscriber<std::vector<T>>& subscriber)>(
+        return rx::create<CombineLatestValues<T>>(
+            std::function<void(rx::subscriber<CombineLatestValues<T>>& subscriber)>(
                 [ctx = CombineLatestSubject(oss)]
-                (rx::subscriber<std::vector<T>>& subscriber){
+                (rx::subscriber<CombineLatestValues<T>>& subscriber){
 
                     subscriber.add(
                         ctx.observable().subscribe(
-                            [subscriber](std::vector<T> value){ subscriber.on_next(value); }));
+                            [subscriber](CombineLatestValues<T> value){ subscriber.on_next(value); }));
             }));
     }
 }
