@@ -54,7 +54,12 @@ namespace rx::space::store{
         void setNode(IReactiveNodePtr&&);
 
     private:
-
+        /**
+         * The subject used to manage the subscriptions to this entry.
+         * It will activate the node when subscribers appear and
+         * dispose it when all subscribers are gone.
+         */
+        const ReactiveNodeEntrySubject subject;
 
         /**
          * The query-space instance that used by this
@@ -73,13 +78,6 @@ namespace rx::space::store{
          * corresponding to this node entry.
          */
         IReactiveNodePtr activeNode;
-
-        /**
-         * The subject used to manage the subscriptions to this entry.
-         * It will activate the node when subscribers appear and
-         * dispose it when all subscribers are gone.
-         */
-        const ReactiveNodeEntrySubject subject;
 
         /**
          * Called whenever the underlying node produces a value. This

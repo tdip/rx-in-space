@@ -23,8 +23,8 @@ namespace rx::space::util{
         ~Disposable(){ runDispose(); }
 
         private:
-        bool hasBeenDisposed;
         const F dispose;
+        bool hasBeenDisposed;
     };
 
     template<typename T>

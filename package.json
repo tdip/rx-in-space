@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/tdip/rx-in-space/issues"
   },
-  "homepage": "https://github.com/tdip/rx-in-space#readme"
+  "homepage": "https://github.com/tdip/rx-in-space#readme",
+  "dependencies": {
+    "nan": "^2.13.2"
+  }
 }

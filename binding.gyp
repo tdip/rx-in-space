@@ -9,6 +9,7 @@
             "include_dirs":[
                 "<!(node -e \"require('nan')\")",
                 "src/cpp/src/shared",
+                "src/cpp/src/include",
                 "src/cpp/modules/RxCpp/Rx/v2/src"
             ],
             "cflags_cc":[

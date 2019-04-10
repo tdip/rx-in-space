@@ -2,11 +2,11 @@
 
 namespace rx::space::store{
     ReactiveNodeInstance::ReactiveNodeInstance(
-        rx::observable<core::ContextPtr>&& nodeSource):
+        const rx::observable<core::ContextPtr>&& nodeSource):
         subject([](){}, [](){}),
         nodeSubscription(
             nodeSource.subscribe(
-                [this](core::ContextPtr& p){ onNext(p); })){}
+                [this](core::ContextPtr p){ onNext(p); })){}
 
     ReactiveNodeInstance::~ReactiveNodeInstance(){
         // Unsubscribe from the source since this node instance is

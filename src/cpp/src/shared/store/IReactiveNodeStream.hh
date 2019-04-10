@@ -1,4 +1,4 @@
-#include "rx.hh"
+#pragma once
 
 #include "rx.hh"
 

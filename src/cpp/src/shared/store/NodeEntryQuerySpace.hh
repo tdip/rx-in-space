@@ -24,7 +24,7 @@ namespace rx::space::store{
         public:
         NodeEntryQuerySpaceStream(
             IReactiveQuerySpace& _outerSpace,
-            core::QueryArgs& _query) :
+            const core::QueryArgs& _query) :
             outerSpace(_outerSpace),
             query(_query){}
 

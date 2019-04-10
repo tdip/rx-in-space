@@ -22,17 +22,17 @@ namespace rx::space::core{
 
         template<typename T>
         constexpr bool holds_alternative() const {
-                return std::holds_alternative<T>(variant);
+                return std::holds_alternative<T>(value);
         }
 
         template<typename T>
         constexpr T get() const{
-                return std::get<T>(variant);
+                return std::get<T>(value);
         }
 
         template<typename T>
         constexpr T& get() {
-                return std::get<T>(variant);
+                return std::get<T>(value);
         }
         
         private:

@@ -18,7 +18,7 @@ namespace rx::space::store{
 
     class ReactiveNodeInstance{
     public:
-        ReactiveNodeInstance(rx::observable<core::ContextPtr>&&);
+        ReactiveNodeInstance(const rx::observable<core::ContextPtr>&&);
         ~ReactiveNodeInstance();
 
         const rx::observable<core::ContextPtr> observable() const;
