@@ -8,6 +8,7 @@ namespace rx::space::store{
     using ReactiveNodeValue = std::shared_ptr<std::vector<core::ContextPtr>>;
 
     class IReactiveNodeStream{
+        public:
         virtual const rx::observable<ReactiveNodeValue>& observable() const = 0;
     };
 

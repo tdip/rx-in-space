@@ -2,8 +2,8 @@
 
 #include "rx.hh"
 
-#include <unordered_map>
 #include <memory>
+#include <vector>
 
 #include "core/QueryArgs.hh"
 
@@ -15,16 +15,18 @@
 
 namespace rx::space::store{
 
+    /**
+     * Query space stream that can be activated and deactivated
+     * without affecting the observable provided to the subscriber.
+     */
     class NodeEntryQuerySpaceStream : public IReactiveNodeStream{
 
         public:
         NodeEntryQuerySpaceStream(
             IReactiveQuerySpace& _outerSpace,
-            core::QueryArgs& _query,
-            IReactiveNodeStreamPtr innerStream) :
+            core::QueryArgs& _query) :
             outerSpace(_outerSpace),
-            query(_query),
-            source(std::move(_subject)){}
+            query(_query){}
 
         virtual const rx::observable<ReactiveNodeValue>& observable() const override;
 
@@ -46,19 +48,24 @@ namespace rx::space::store{
      * and will de-activate the query space if the node asociated
      * to it becomes inactive.
      */
-    class NodeEntryQuerySpace: public INodeReactiveQuerySpace{
+    class NodeEntryQuerySpace : public INodeReactiveQuerySpace{
 
         public:
-        NodeEntryQuerySpace(IReactiveQuerySpace& _outerSpace): outerSpace(_outerSpace) {} 
+        NodeEntryQuerySpace(IReactiveQuerySpace& _outerSpace) :
+        isActive(false),
+        outerSpace(_outerSpace) {} 
 
-        virtual IReactiveNodeStreamPtr query(core::QueryArgs&&) override;
+        virtual IReactiveNodeStreamPtr query(const core::QueryArgs&) override;
         virtual void activate() override;
         virtual void deactivate() override;
 
+        static INodeReactiveQuerySpacePtr create(IReactiveQuerySpace& space){
+            return std::make_unique<NodeEntryQuerySpace>(space);
+        }
+
         private:
-        long id;
         bool isActive;
         IReactiveQuerySpace& outerSpace;
-        std::unordered_map<long, std::weak_ptr<NodeEntryQuerySpaceStream>> streams;
+        std::vector<std::weak_ptr<NodeEntryQuerySpaceStream>> streams;
     };
 };

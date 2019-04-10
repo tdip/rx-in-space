@@ -8,6 +8,7 @@
 
 #include "store/IReactiveNode.hh"
 #include "store/IReactiveNodeStream.hh"
+#include "store/IReactiveQuerySpace.hh"
 #include "store/Property.hh"
 #include "store/ReactiveNodeEntry.hh"
 #include "store/QueryContext.hh"
@@ -20,7 +21,7 @@ namespace rx::space::store{
 
     Key fromOutputSet(const core::OutputSet&);
 
-    class ReactiveNodeCollection{
+    class ReactiveNodeCollection : public IReactiveQuerySpace{
     public:
         /**
         * Query the reactive space for values matching the
@@ -29,7 +30,7 @@ namespace rx::space::store{
         * matching the query become available, they will
         * be added to the reactive stream.
         */ 
-        IReactiveNodeStreamPtr query(core::QueryArgs&&);
+        virtual IReactiveNodeStreamPtr query(const  core::QueryArgs&) override;
 
         /**
          * Set the data source for a particular reactive node.
@@ -50,7 +51,7 @@ namespace rx::space::store{
          * no role determining if the observables of itself
          * are active or not.
          */
-        QueryContextPtr queryContext(bool isWeak, core::QueryArgs&) const;
+        QueryContextPtr queryContext(bool isWeak, const core::QueryArgs&) const;
 
         std::map<Key, ReactiveNodeEntry> reactiveNodes;
         //std::map<Key, QueryInstanceWPtr> reactiveQueries;

@@ -5,14 +5,14 @@
 
 #include "rx.hh"
 
-#include "core/IValue.hh"
+#include "core/Value.hh"
 #include "core/OutputSet.hh"
 
 namespace rx::space::core{
 
     struct SetValue{
         OutputSet output;
-        rx::observable<IValuePtr> values;
+        rx::observable<ValuePtr> values;
     };
 
     using Update = std::variant<SetValue>;

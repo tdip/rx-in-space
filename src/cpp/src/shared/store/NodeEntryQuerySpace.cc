@@ -2,21 +2,54 @@
 
 namespace rx::space::store{
 
-    IReactiveNodeStreamPtr NodeEntryQuerySpace::query(core::QueryArgs&& query){
-
-    }
-
-
-    virtual const rx::observable<ReactiveNodeValue>& NodeEntryQuerySpace::observable() const override{
-        return subject.observable();
+    IReactiveNodeStreamPtr NodeEntryQuerySpace::query(const core::QueryArgs& query){
+        auto stream = std::make_shared<NodeEntryQuerySpaceStream>(outerSpace, query);
+        streams.push_back(stream);
+        return stream;
     }
 
     void NodeEntryQuerySpace::activate(){
-        inner = outerSpace.query(query);
-        inner.observable().subscribe([this](ReactiveNodeValue value){ subject.onNext(); });
+
+        isActive = true;
+        for(
+            auto wStream = streams.begin();
+            wStream != streams.end();
+            wStream++){
+
+            auto stream = wStream->lock();
+            if(stream){
+                stream->activate();
+            }
+        }
+    }
+    
+    void NodeEntryQuerySpace::deactivate(){
+
+        // Todo: remove the invalid pointers
+        // from the array
+        isActive = false;
+        for(
+            auto wStream = streams.begin();
+            wStream != streams.end();
+            wStream++){
+
+            auto stream = wStream->lock();
+            if(stream){
+                stream->deactivate();
+            }
+        }
     }
 
-    void NodeEntryQuerySpace::deactivate(){
+    const rx::observable<ReactiveNodeValue>& NodeEntryQuerySpaceStream::observable() const{
+        return subject.observable();
+    }
+
+    void NodeEntryQuerySpaceStream::activate(){
+        inner = outerSpace.query(query);
+        inner->observable().subscribe([this](ReactiveNodeValue value){ subject.onNext(value); });
+    }
+
+    void NodeEntryQuerySpaceStream::deactivate(){
         inner.reset();
     }
 }

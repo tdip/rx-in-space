@@ -22,15 +22,22 @@ namespace rx::space::store{
 
     public:
         ReactiveNodeStream(
-            core::QueryArgs&& _query,
-            QueryContext&& _queryInstance): 
+            const core::QueryArgs& _query,
+            const QueryContextPtr _queryInstance): 
             query(_query),
-            queryInstance(std::move(_queryInstance)){}
+            queryInstance(_queryInstance){}
 
-        virtual const rx::observable<core::Context>& observable() const override;
+        virtual const rx::observable<ReactiveNodeValue>& observable() const override;
+
+        static IReactiveNodeStreamPtr create(
+            const core::QueryArgs& _query,
+            const QueryContextPtr _queryInstance){
+
+            return std::make_shared<ReactiveNodeStream>(_query, _queryInstance);
+        }
 
     private:
-        const QueryContext queryInstance;
+        const QueryContextPtr queryInstance;
         const core::QueryArgs query;
     };
 }

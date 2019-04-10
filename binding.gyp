@@ -4,19 +4,12 @@
             "target_name":"libRxInSpace",
             "type":"<(library)",
             "sources":[
-                '<!@(find src/cpp/src/signals/ -name "*.cc")',
-                '<!@(find src/cpp/src/platform/node/shared/ -name "*.cc")'
+                '<!@(find src/cpp/src/shared/ -name "*.cc")',
             ],
             "include_dirs":[
                 "<!(node -e \"require('nan')\")",
-                "src/cpp/src/platform/node/shared",
-                "src/cpp/src/signals",
-                "src/cpp/src/signals/core",
-                "src/cpp/src/signals/engine",
-                "src/cpp/src/signals/utils",
-                "src/cpp/libs/json/single_include",
-                "src/cpp/libs/rapidjson/include",
-                "src/cpp/libs/RxCpp/Rx/v2/src"
+                "src/cpp/src/shared",
+                "src/cpp/modules/RxCpp/Rx/v2/src"
             ],
             "cflags_cc":[
                 "-fexceptions",
@@ -38,65 +31,6 @@
                     }
                 ]
             ],
-
-        },
-        {
-            "target_name":"signals2Tests",
-            "sources":[
-                '<!@(find src/cpp/test/tests/platform/node/ -name "*.cc")',
-                'src/cpp/libs/googletest/googletest/src/gtest-all.cc'
-            ],
-            "dependencies":[
-                "signals2Shared"
-            ],
-            "include_dirs":[
-                "<!(node -e \"require('nan')\")",
-                "src/cpp/src/platform/node/shared",
-                "src/cpp/src/signals",
-                "src/cpp/src/signals/core",
-                "src/cpp/src/signals/engine",
-                "src/cpp/src/signals/utils",
-                "src/cpp/test/tests/platform/node",
-                "src/cpp/libs/json/single_include",
-                "src/cpp/libs/googletest/googletest/include",
-                "src/cpp/libs/googletest/googletest/",
-                "src/cpp/libs/rapidjson/include",
-                "src/cpp/libs/RxCpp/Rx/v2/src"
-            ],
-            "cflags_cc":[
-                "-fexceptions",
-                "-std=c++17",
-                "-frtti"
-            ]
-        },
-        {
-            "target_name":"signals2",
-            "sources":[
-                'src/cpp/src/platform/node/index.cc',
-
-            ],
-            "dependencies":[
-                "signals2Shared"
-            ],
-            "include_dirs":[
-                "<!(node -e \"require('nan')\")",
-                "src/cpp/src/platform/node/shared",
-                "src/cpp/src/signals",
-                "src/cpp/src/signals/core",
-                "src/cpp/src/signals/engine",
-                "src/cpp/src/signals/utils",
-                "src/cpp/test/tests/platform/node",
-                "src/cpp/libs/json/single_include",
-                "src/cpp/libs/googletest/googletest/include",
-                "src/cpp/libs/googletest/googletest/",
-                "src/cpp/libs/rapidjson/include",
-                "src/cpp/libs/RxCpp/Rx/v2/src"
-            ],
-            "cflags_cc":[
-                "-fexceptions",
-                "-std=c++17",
-                "-frtti"
-            ]
         }
     ]
 }
