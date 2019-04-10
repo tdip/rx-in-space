@@ -21,16 +21,16 @@ namespace rx::space::store{
         ReactiveNodeInstance(rx::observable<core::ContextPtr>&&);
         ~ReactiveNodeInstance();
 
-        rx::observable<core::ContextPtr> observable();
+        const rx::observable<core::ContextPtr> observable() const;
 
-        void onNext(core::ContextPtr& value);
+        void onNext(core::ContextPtr& value) const;
 
         static ReactiveNodeInstancePtr create(rx::observable<core::ContextPtr>&&){
 
         }
 
     private:
-        ReactiveNodeInstanceSubject subject;
+        const ReactiveNodeInstanceSubject subject;
         const rx::composite_subscription nodeSubscription;
     };
 }

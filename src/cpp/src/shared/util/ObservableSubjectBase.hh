@@ -81,7 +81,7 @@ namespace rx::space::util{
          * Maning that subscribing/unsubscribing from it can potentially trigger
          * the call to the activate/deactivate functions.
          */
-        rx::observable<T> observable() {
+        const rx::observable<T> observable() const {
             ContextWPtr wContext = context;
             return rx::create<T>(
                 std::function<void(rx::subscriber<T>&)>(
@@ -100,7 +100,7 @@ namespace rx::space::util{
          * Subscribing or un-subscribing from it will never trigger the
          * activate or deactivate function.
          */
-        rx::observable<T> observableWeak() {
+        const rx::observable<T> observableWeak() const {
             ContextWPtr wContext = context;
             return rx::create<T>(
                 std::function<void(rx::subscriber<T>&)>(
@@ -117,7 +117,7 @@ namespace rx::space::util{
         /**
          * Emit a value into the observable.
          */
-        void onNext(T value){
+        void onNext(T value) const{
             auto& subscriptions = context->subscriptions;
             for(
                 auto subscription = subscriptions.begin();
@@ -129,7 +129,7 @@ namespace rx::space::util{
         }
 
     protected:
-        ContextPtr context;
+        const ContextPtr context;
     private:
         static std::shared_ptr<ObservableSubjectDispose> getActiveDisposer(
             ContextPtr context){

@@ -50,7 +50,7 @@ namespace rx::space::store{
          * no role determining if the observables of itself
          * are active or not.
          */
-        QueryContextPtr queryContext(bool isWeak, core::QueryArgs&);
+        QueryContextPtr queryContext(bool isWeak, core::QueryArgs&) const;
 
         std::map<Key, ReactiveNodeEntry> reactiveNodes;
         //std::map<Key, QueryInstanceWPtr> reactiveQueries;

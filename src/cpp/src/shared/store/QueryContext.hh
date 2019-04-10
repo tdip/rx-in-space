@@ -28,6 +28,6 @@ namespace rx::space::store{
         }
 
     private:
-        std::vector<ReactiveNodeInstancePtr> nodeInstances;
+        const std::vector<ReactiveNodeInstancePtr> nodeInstances;
     };
 }

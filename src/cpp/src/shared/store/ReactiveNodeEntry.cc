@@ -2,13 +2,13 @@
 
 namespace rx::space::store{
 
-    ReactiveNodeEntry::ReactiveNodeEntry(IReactiveQuerySpacePtr&& _space) :
+    ReactiveNodeEntry::ReactiveNodeEntry(INodeReactiveQuerySpacePtr&& _space) :
         subject(
             [this]() mutable { activateSubscriptionToNode(); },
             [this]() mutable { unsubscribeNode(); }),
         space(std::move(_space)) {}
 
-    void ReactiveNodeEntry::onNodeValue(core::IValuePtr){
+    void ReactiveNodeEntry::onNodeValue(core::ValuePtr){
         core::ContextPtr context = core::Context::create();
         subject.onNext(context);
     }
@@ -18,9 +18,11 @@ namespace rx::space::store{
             return;
         }
 
+        space->activate();
+
         activeNodeSubscription = activeNode->subscribe(
             *space,
-            [this](core::IValuePtr ctx){
+            [this](core::ValuePtr ctx){
                 onNodeValue(ctx);
             });
     }
@@ -34,10 +36,11 @@ namespace rx::space::store{
 
     bool ReactiveNodeEntry::unsubscribeNode(){
         activeNodeSubscription.unsubscribe();
+        space->deactivate();
         return subject.isActive();
     }
 
-    ReactiveNodeInstancePtr ReactiveNodeEntry::activate(bool isWeak){
+    ReactiveNodeInstancePtr ReactiveNodeEntry::activate(bool isWeak) const{
 
         return std::make_unique<ReactiveNodeInstance>(
             isWeak ? subject.observableWeak() : subject.observable());

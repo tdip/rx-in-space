@@ -14,11 +14,11 @@ namespace rx::space::store{
         nodeSubscription.unsubscribe();
     }
 
-    void ReactiveNodeInstance::onNext(core::ContextPtr& value){
+    void ReactiveNodeInstance::onNext(core::ContextPtr& value) const{
         subject.onNext(value);
     }
 
-    rx::observable<core::ContextPtr> ReactiveNodeInstance::observable(){
+    const rx::observable<core::ContextPtr> ReactiveNodeInstance::observable() const{
         return subject.observable();
     }
 }

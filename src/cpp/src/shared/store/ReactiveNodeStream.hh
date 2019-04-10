@@ -2,7 +2,10 @@
 
 #include <vector>
 
+#include "core/QueryArgs.hh"
+
 #include "store/IReactiveNodeStream.hh"
+#include "store/ReactiveNodeStream.hh"
 
 namespace rx::space::store{
 
@@ -18,11 +21,16 @@ namespace rx::space::store{
     class ReactiveNodeStream: public IReactiveNodeStream{
 
     public:
-        ReactiveNodeStream(const QueryInstancePtr& _queryInstance): queryInstance(_queryInstance){}
+        ReactiveNodeStream(
+            core::QueryArgs&& _query,
+            QueryContext&& _queryInstance): 
+            query(_query),
+            queryInstance(std::move(_queryInstance)){}
 
-        virtual rx::observable<core::Context>& observable() override;
+        virtual const rx::observable<core::Context>& observable() const override;
 
     private:
-        const QueryInstancePtr queryInstance;
+        const QueryContext queryInstance;
+        const core::QueryArgs query;
     };
 }

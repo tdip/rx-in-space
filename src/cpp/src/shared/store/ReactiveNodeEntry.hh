@@ -9,6 +9,7 @@
 #include "core/Context.hh"
 #include "core/QueryArgs.hh"
 
+#include "store/INodeReactiveQuerySpace.hh"
 #include "store/IReactiveNode.hh"
 #include "store/ReactiveNodeInstance.hh"
 
@@ -27,7 +28,7 @@ namespace rx::space::store{
      */
     class ReactiveNodeEntry{
     public:
-        ReactiveNodeEntry(IReactiveQuerySpacePtr&&);
+        ReactiveNodeEntry(INodeReactiveQuerySpacePtr&&);
 
         /**
          * Activate the node in order to subscribe to
@@ -35,7 +36,7 @@ namespace rx::space::store{
          * the node are discarded, the node will
          * be deactivated to save resources.
          */
-        ReactiveNodeInstancePtr activate(bool isWeak);
+        ReactiveNodeInstancePtr activate(bool isWeak) const;
 
         /**
          * Check whether this node belongs to
@@ -60,7 +61,7 @@ namespace rx::space::store{
          * node entry to subscribe to other values
          * in the query space.
          */
-        const IReactiveQuerySpacePtr space;
+        const INodeReactiveQuerySpacePtr space;
 
         /**
          * Holds the active (if any) subscription with the reactive node
@@ -78,7 +79,7 @@ namespace rx::space::store{
          * It will activate the node when subscribers appear and
          * dispose it when all subscribers are gone.
          */
-        ReactiveNodeEntrySubject subject;
+        const ReactiveNodeEntrySubject subject;
 
         /**
          * Called whenever the underlying node produces a value. This
@@ -86,7 +87,7 @@ namespace rx::space::store{
          * Context and passes the resulting value to the observable
          * of the node entry.
          */
-        void onNodeValue(core::IValuePtr);
+        void onNodeValue(core::ValuePtr);
 
         bool unsubscribeNode();
 

@@ -21,12 +21,12 @@ namespace rx::space::store{
         return std::move(key);
     }
 
-    QueryContextPtr ReactiveNodeCollection::queryContext(bool isWeak, core::QueryArgs& query){
+    QueryContextPtr ReactiveNodeCollection::queryContext(bool isWeak, core::QueryArgs& query) const{
 
         std::vector<ReactiveNodeInstancePtr> nodes;
         for(auto&& node = reactiveNodes.begin(); node != reactiveNodes.end(); node++){
 
-            ReactiveNodeEntry& entry = node->second;
+            const ReactiveNodeEntry& entry = node->second;
 
             if(entry.matches(query)){
                 nodes.push_back(entry.activate(isWeak));
@@ -34,5 +34,11 @@ namespace rx::space::store{
         }
 
         return QueryContext::create(std::move(nodes));
+    }
+
+    IReactiveNodeStreamPtr ReactiveNodeCollection::query(core::QueryArgs&& query){
+        Key key = fromQuery(query);
+
+        if(reactiveNodes.)
     }
 }

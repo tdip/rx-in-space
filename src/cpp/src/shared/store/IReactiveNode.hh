@@ -9,13 +9,13 @@
 #include "core/OutputSet.hh"
 #include "core/QueryArgs.hh"
 #include "core/QuerySet.hh"
-#include "core/IValue.hh"
+#include "core/Value.hh"
 
 #include "store/IReactiveQuerySpace.hh"
 
 namespace rx::space::store{
 
-    using OnValueNext = std::function<void(core::IValuePtr)>;
+    using OnValueNext = std::function<void(core::ValuePtr)>;
 
     class IReactiveNode{
     public:
