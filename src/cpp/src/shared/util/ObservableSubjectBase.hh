@@ -64,7 +64,8 @@ namespace rx::space::util{
     public:
         ObservableSubjectBase(ContextPtr&& _context): context(std::move(_context)) {}
 
-        ObservableSubjectBase(): context(std::make_shared<ObservableSubjectBaseContext<T>>()) {}
+        ObservableSubjectBase():
+            context(std::make_shared<ObservableSubjectBaseContext<T>>()) {}
 
         virtual ~ObservableSubjectBase(){
             context->subscriptions.clear();
@@ -114,10 +115,20 @@ namespace rx::space::util{
 
         bool isActive() const { return !context->dispose.expired(); }
 
+        void onNext(T value){
+            onNextStatic(context, value);
+        }
+
         /**
          * Emit a value into the observable.
          */
-        void onNext(T value) const{
+        static void onNextStatic(const ContextWPtr wContext, T value){
+
+            ContextPtr context = wContext.lock();
+            if(!context){
+                return;
+            }
+
             auto& subscriptions = context->subscriptions;
             for(
                 auto subscription = subscriptions.begin();

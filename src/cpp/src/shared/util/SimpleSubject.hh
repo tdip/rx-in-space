@@ -58,6 +58,14 @@ namespace rx::space::util{
 
             const long id = context->id;
             context->subscribers.emplace(id, subscriber);
+
+            subscriber.add(
+                [id, wContext](){
+                    ContextPtr context = wContext.lock();
+                    if(context){
+                        context->subscribers.erase(id);
+                    }
+                });
         }
     };
 }
