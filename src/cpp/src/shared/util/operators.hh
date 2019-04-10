@@ -23,10 +23,15 @@ namespace rx::space::util{
             values(_observables.size()),
             itemSubscriptions(_observables.size()){}
 
+        virtual ~CombineLatestContext() override{
+            onDeActivate();
+        }
+
         protected:
         virtual void onActivate() override{
             for(size_t i = 0; i < observables.size(); i++){
-                // todo: don't capture this
+                // It is ok to capture *this* since this subscriptions
+                // get discarded once the object is destroyed.
                 itemSubscriptions[i] = observables[i].subscribe([i, this](T v){ onNext(i, v); });
             }
         }

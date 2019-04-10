@@ -26,6 +26,8 @@ namespace rx::space::util{
     class ObservableSubjectBaseContext{
 
         public:
+
+        virtual ~ObservableSubjectBaseContext() {}
         /**
          * Counter to generate unique identifiers to all
          * subscribers to this node entry.
