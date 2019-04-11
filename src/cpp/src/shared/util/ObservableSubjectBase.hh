@@ -141,6 +141,17 @@ namespace rx::space::util{
             }
         }
 
+        //ObservableSubjectBase<T>& operator=(const ObservableSubjectBase<T>& other){
+        //    const_cast<ContextPtr&>(context) = other.context;
+        //    return *this;
+        //}
+
+        //ObservableSubjectBase<T>& operator=(const ObservableSubjectBase<T>&& other){
+        //    const_cast<ContextPtr&>(context) = other.context;
+        //    return *this;
+        //}
+
+
     protected:
         const ContextPtr context;
     private:
@@ -214,7 +225,6 @@ namespace rx::space::util{
             context->subscriptions.emplace(id, std::move(ss));
         }
     };
-
     /**
      * Implementation of an observable subject that can
      * be used as a standalone object instead of requiring
@@ -246,10 +256,23 @@ namespace rx::space::util{
     template<typename T, typename A, typename D>
     class ObservableSubject : public ObservableSubjectBase<T>{
         public:
-        ObservableSubject(A&& activate, D&& deactivate)
-            : ObservableSubjectBase<T>(std::make_shared<ObservableSubjectContext<T,A,D>>(
+        ObservableSubject(A&& activate, D&& deactivate) :
+            ObservableSubjectBase<T>(std::make_shared<ObservableSubjectContext<T,A,D>>(
                 std::forward<A>(activate),
                 std::forward<D>(deactivate))) {}
+
+        ObservableSubject(std::shared_ptr<ObservableSubjectContext<T,A,D>> context) :
+            ObservableSubjectBase<T>(context) {}
+
+        ObservableSubject<T,A,D>& operator=(const ObservableSubject<T,A,D>&& other){
+            const_cast<std::shared_ptr<ObservableSubjectBaseContext<T>>&>(ObservableSubjectBase<T>::context) = other.context;
+            return *this;
+        }
+
+        //ObservableSubject<T,A,D> operator=(const ObservableSubject<T,A,D>& other){
+            //(*this) = other;
+            //return *this; 
+        //}
     };
 
     template<typename T, typename A, typename D>

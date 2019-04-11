@@ -17,6 +17,26 @@
 
 namespace rx::space::store{
 
+    struct ReactiveNodeEntryContext : public ReactiveNodeContextBase{
+        const core::OutputSet nodeSet;
+        /**
+         * The query-space instance that used by this
+         * node entry to subscribe to other values
+         * in the query space.
+         */
+        const INodeReactiveQuerySpacePtr space;
+        /**
+         * Holds the active (if any) subscription with the reactive node
+         */
+        rx::composite_subscription activeNodeSubscription;
+
+        /**
+         * The current node that provides values to the set
+         * corresponding to this node entry.
+         */
+        IReactiveNodePtr activeNode;
+    };
+
     /**
      * Wrapper class to store reactive nodes
      * in the reactive space. This class is also
@@ -52,31 +72,7 @@ namespace rx::space::store{
         void setNode(IReactiveNodePtr&&);
 
     private:
-        const core::OutputSet nodeSet;
-        /**
-         * The subject used to manage the subscriptions to this entry.
-         * It will activate the node when subscribers appear and
-         * dispose it when all subscribers are gone.
-         */
-        const ReactiveNodeEntrySubject subject;
-
-        /**
-         * The query-space instance that used by this
-         * node entry to subscribe to other values
-         * in the query space.
-         */
-        const INodeReactiveQuerySpacePtr space;
-
-        /**
-         * Holds the active (if any) subscription with the reactive node
-         */
-        rx::composite_subscription activeNodeSubscription;
-
-        /**
-         * The current node that provides values to the set
-         * corresponding to this node entry.
-         */
-        IReactiveNodePtr activeNode;
+        const std::shared_ptr<ReactiveNodeEntryContext> context;
 
         /**
          * Called whenever the underlying node produces a value. This

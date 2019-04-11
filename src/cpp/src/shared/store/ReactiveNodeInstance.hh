@@ -17,8 +17,8 @@ namespace rx::space::store{
     using ReactiveNodeEntrySubject = util::ObservableSubject<core::ContextPtr, std::function<void()>, std::function<void()>>;
 
     struct ReactiveNodeContextBase{
-        const core::OutputSet query;
-        const ReactiveNodeEntrySubject subject;
+        const core::OutputSet nodeSet;
+        ReactiveNodeEntrySubject subject;
     };
 
     struct ReactiveNodeInstanceContext{
