@@ -43,7 +43,10 @@ namespace rx::space::store{
         Key key = fromQuery(query);
 
         if(reactiveNodes.find(key) == reactiveNodes.end()){
-            reactiveNodes.emplace(key, NodeEntryQuerySpace::create(*this));
+            reactiveNodes.emplace(
+                std::piecewise_construct,
+                std::forward_as_tuple(key),
+                std::forward_as_tuple(NodeEntryQuerySpace::create(*this)));
         }
     }
 }

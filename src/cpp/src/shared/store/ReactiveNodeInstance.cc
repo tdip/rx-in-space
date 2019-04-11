@@ -1,24 +1,35 @@
 #include "store/ReactiveNodeInstance.hh"
 
 namespace rx::space::store{
+
+    void onNext(
+        const std::shared_ptr<ReactiveNodeInstanceContext> context,
+        core::ContextPtr& value){
+
+        context->subject.onNext(value);
+    }
+
     ReactiveNodeInstance::ReactiveNodeInstance(
-        const rx::observable<core::ContextPtr>&& nodeSource):
-        subject([](){}, [](){}),
-        nodeSubscription(
-            nodeSource.subscribe(
-                [this](core::ContextPtr p){ onNext(p); })){}
+        const bool isWeak,
+        const std::shared_ptr<ReactiveNodeContextBase> baseContext):
+        context(new ReactiveNodeInstanceContext{
+            baseContext,
+            ReactiveNodeEntrySubject([](){}, [](){})}) {
+
+            auto ctx = context;
+            context->nodeSubscription = (isWeak ?
+                baseContext->subject.observableWeak() :
+                baseContext->subject.observable())
+                .subscribe([ctx](core::ContextPtr value){ onNext(ctx, value); });
+        }
 
     ReactiveNodeInstance::~ReactiveNodeInstance(){
         // Unsubscribe from the source since this node instance is
         // no longer needed
-        nodeSubscription.unsubscribe();
-    }
-
-    void ReactiveNodeInstance::onNext(core::ContextPtr& value) const{
-        subject.onNext(value);
+        context->nodeSubscription.unsubscribe();
     }
 
     const rx::observable<core::ContextPtr> ReactiveNodeInstance::observable() const{
-        return subject.observable();
+        return context->subject.observable();
     }
 }

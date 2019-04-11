@@ -8,8 +8,10 @@ namespace rx::space::store{
             [this]() mutable { unsubscribeNode(); }),
         space(std::move(_space)) {}
 
-    void ReactiveNodeEntry::onNodeValue(core::ValuePtr){
-        core::ContextPtr context = core::Context::create();
+    void ReactiveNodeEntry::onNodeValue(core::ValuePtr value){
+        core::ContextPtr context = core::Context::create(
+            nullptr,
+            value);
         subject.onNext(context);
     }
 
@@ -42,7 +44,6 @@ namespace rx::space::store{
 
     ReactiveNodeInstancePtr ReactiveNodeEntry::activate(bool isWeak) const{
 
-        return std::make_unique<ReactiveNodeInstance>(
-            isWeak ? subject.observableWeak() : subject.observable());
+        return std::make_unique<ReactiveNodeInstance>(isWeak, nullptr);
     }
 }

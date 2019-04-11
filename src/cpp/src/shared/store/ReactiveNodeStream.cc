@@ -12,7 +12,6 @@ namespace rx::space::store{
     core::ContextPtr aggregateContext(
         const core::QueryArgs& query,
         const util::CombineLatestValues<core::ContextPtr> input){
-
     }
 
     ReactiveNodeStream::ReactiveNodeStream(

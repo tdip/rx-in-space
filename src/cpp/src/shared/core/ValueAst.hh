@@ -16,6 +16,9 @@ namespace rx::space::core{
         explicit ValueAst(std::variant<Scalars, std::vector<RecValue>>&& _value)
             : value(std::move(_value)){}
 
+        explicit ValueAst(const std::variant<Scalars, std::vector<RecValue>>& _value)
+            : value(_value){}
+
         template<typename T>
         constexpr bool holds_alternative() const {
                 return std::holds_alternative<T>(value);

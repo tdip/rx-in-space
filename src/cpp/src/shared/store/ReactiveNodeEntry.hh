@@ -17,8 +17,6 @@
 
 namespace rx::space::store{
 
-    using ReactiveNodeEntrySubject = util::ObservableSubject<core::ContextPtr, std::function<void()>, std::function<void()>>;
-
     /**
      * Wrapper class to store reactive nodes
      * in the reactive space. This class is also
@@ -54,6 +52,7 @@ namespace rx::space::store{
         void setNode(IReactiveNodePtr&&);
 
     private:
+        const core::OutputSet nodeSet;
         /**
          * The subject used to manage the subscriptions to this entry.
          * It will activate the node when subscribers appear and

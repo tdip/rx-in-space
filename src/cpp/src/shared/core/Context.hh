@@ -2,6 +2,7 @@
 
 #include <memory>
 
+#include "core/Value.hh"
 #include "core/ValueAst.hh"
 
 namespace rx::space::core{
@@ -11,6 +12,8 @@ namespace rx::space::core{
     using IValuePropsEntryPtr = std::shared_ptr<IValuePropsEntry>;
 
     using ValueProps = ValueAst<IValuePropsEntryPtr>;
+
+    using ValuePropsPtr = std::shared_ptr<ValueProps>;
 
     class Context;
 
@@ -24,8 +27,19 @@ namespace rx::space::core{
      */
     class Context{
         public:
-        static ContextPtr create();
+        Context(ValuePropsPtr __properties, ValuePtr __value):
+            _properties(__properties),
+            _value(__value) {}
 
-        const ValueProps& properties() const;
+        static ContextPtr create(ValuePropsPtr, ValuePtr);
+
+        static ContextPtr merge(std::vector<ContextPtr>);
+
+        const ValuePropsPtr properties() const { return _properties; }
+        const ValuePtr value() const { return _value; }
+
+        private:
+        const ValuePropsPtr _properties;
+        const ValuePtr _value;
     };
 }
