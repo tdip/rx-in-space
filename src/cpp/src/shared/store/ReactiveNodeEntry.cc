@@ -1,49 +1,71 @@
 #include "store/ReactiveNodeEntry.hh"
 
+#include <cassert>
+
 namespace rx::space::store{
 
-    ReactiveNodeEntry::ReactiveNodeEntry(INodeReactiveQuerySpacePtr&& _space) :
-        subject(
-            [this]() mutable { activateSubscriptionToNode(); },
-            [this]() mutable { unsubscribeNode(); }),
-        space(std::move(_space)) {}
+    void ReactiveNodeEntry::activateSubscriptionToNode(const ContextWPtr wContext){
 
-    void ReactiveNodeEntry::onNodeValue(core::ValuePtr value){
-        core::ContextPtr context = core::Context::create(
-            nullptr,
-            value);
-        subject.onNext(context);
-    }
+        auto context = wContext.lock();
+        assert(context);
 
-    void ReactiveNodeEntry::activateSubscriptionToNode(){
-        if(!activeNode){
+        auto& activeNode = context->activeNode;
+        if(!context->activeNode){
             return;
         }
 
-        space->activate();
-
-        activeNodeSubscription = activeNode->subscribe(
-            *space,
-            [this](core::ValuePtr ctx){
-                onNodeValue(ctx);
+        context->space->activate();
+        context->activeNodeSubscription = activeNode->subscribe(
+            *context->space,
+            [wContext](core::ValuePtr value){
+                onNodeValue(wContext, value);
             });
     }
 
-    void ReactiveNodeEntry::setNode(IReactiveNodePtr&& node){
-        activeNode = std::move(node);
-        if(unsubscribeNode()){
-            activateSubscriptionToNode();
+    ReactiveNodeEntry::~ReactiveNodeEntry(){
+        unsubscribeNode(context);
+    }
+
+    ReactiveNodeEntry::ReactiveNodeEntry(INodeReactiveQuerySpacePtr&& _space) :
+        context(new ReactiveNodeEntryContext{
+            ReactiveNodeContextBase{ core::OutputSet(), ReactiveNodeEntrySubject(nullptr) },
+            std::move(_space),
+            rx::composite_subscription(),
+            nullptr
+        }) {
+            ContextWPtr wContext = context;
+            const_cast<ReactiveNodeEntrySubject&>(context->subject) = ReactiveNodeEntrySubject(
+                [wContext]() mutable { activateSubscriptionToNode(wContext); },
+                [wContext]() mutable { unsubscribeNode(wContext); });
+        }
+
+    void ReactiveNodeEntry::onNodeValue(ContextWPtr wContext, core::ValuePtr value){
+        auto context = wContext.lock();
+        assert(context);
+
+        core::ContextPtr result = core::Context::create(
+            nullptr,
+            value);
+        context->subject.onNext(result);
+    }
+
+    void ReactiveNodeEntry::setNode(IReactiveNodePtr&& node) const{
+        context->activeNode = std::move(node);
+        if(unsubscribeNode(context)){
+            activateSubscriptionToNode(context);
         }
     }
 
-    bool ReactiveNodeEntry::unsubscribeNode(){
-        activeNodeSubscription.unsubscribe();
-        space->deactivate();
-        return subject.isActive();
+    bool ReactiveNodeEntry::unsubscribeNode(ContextWPtr wContext){
+        auto context = wContext.lock();
+        assert(context);
+
+        context->activeNodeSubscription.unsubscribe();
+        context->space->deactivate();
+        return context->subject.isActive();
     }
 
     ReactiveNodeInstancePtr ReactiveNodeEntry::activate(bool isWeak) const{
-
-        return std::make_unique<ReactiveNodeInstance>(isWeak, nullptr);
+        return std::make_unique<ReactiveNodeInstance>(isWeak, context);
     }
 }

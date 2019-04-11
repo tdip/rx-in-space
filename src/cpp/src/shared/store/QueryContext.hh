@@ -13,7 +13,12 @@ namespace rx::space::store{
 
     using QueryContextPtr = std::unique_ptr<QueryContext>;
 
-    using QuerySources = std::shared_ptr<std::vector<rx::observable<core::ContextPtr>>>;
+    struct QuerySource{
+        const core::OutputSet& outputSet;
+        const rx::observable<core::ContextPtr> observable;
+    };
+
+    using QuerySources = std::shared_ptr<std::vector<QuerySource>>;
 
     /**
      * Class repsponsible for storing all the resources

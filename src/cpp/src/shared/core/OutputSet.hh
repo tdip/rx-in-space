@@ -9,9 +9,7 @@
 
 namespace rx::space::core{
 
-    struct FieldPredicate{
-        const std::string field;
-    };
+    using FieldPredicate = std::string;
 
     using OutputSetPredicate = std::variant<FieldPredicate>;
 

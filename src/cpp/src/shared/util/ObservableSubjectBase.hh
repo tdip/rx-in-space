@@ -268,11 +268,6 @@ namespace rx::space::util{
             const_cast<std::shared_ptr<ObservableSubjectBaseContext<T>>&>(ObservableSubjectBase<T>::context) = other.context;
             return *this;
         }
-
-        //ObservableSubject<T,A,D> operator=(const ObservableSubject<T,A,D>& other){
-            //(*this) = other;
-            //return *this; 
-        //}
     };
 
     template<typename T, typename A, typename D>

@@ -1,5 +1,8 @@
 #include "store/ReactiveNodeStream.hh"
 
+#include <optional>
+#include <set>
+
 #include "core/QueryArgs.hh"
 #include "core/MergeStrategy.hh"
 
@@ -9,21 +12,63 @@
 
 namespace rx::space::store{
 
+    using PropertyGroup = std::set<std::tuple<std::string, core::OutputSetPredicate>>;
+
+    std::optional<PropertyGroup> getProperties(
+        std::vector<std::string>& keys,
+        core::OutputSet& output){
+
+        PropertyGroup result;
+        auto& predicates = output.predicates;
+
+        for(
+            auto&& key = keys.begin();
+            key != keys.end();
+            key++){
+            
+            auto value = predicates.find(*key);
+            if(value == predicates.end()){
+                return std::nullopt;
+            }
+
+            result.emplace(*key, *value);
+        }
+
+        return result;
+    }
+
+    rx::observable<core::ContextPtr> aggregateQuery(
+        core::Aggregate& agregate,
+        QuerySources& sources){
+        
+        std::unordered_map<PropertyGroup, rx::observable<core::ContextPtr>&> groups();
+        std::vector<rx::observable<core::ContextPtr>> sourceObservables;
+
+        for(
+
+        )
+    }
+
     core::ContextPtr aggregateContext(
         const core::QueryArgs& query,
         const util::CombineLatestValues<core::ContextPtr> input){
     }
 
     ReactiveNodeStream::ReactiveNodeStream(
-        const core::QueryArgs& _query,
-        QueryContextPtr _queryInstance): 
+        const core::QueryArgs& _inputQuery,
+        QueryContextPtr&& _queryInstance): 
+        inputQuery(_inputQuery),
         queryInstance(std::move(_queryInstance)),
-        query(_query),
         sourcesSubscription(
             queryInstance->sources.subscribe(
                 [this](QuerySources sources){
 
                 })){}
+
+    ReactiveNodeStream::~ReactiveNodeStream(){
+        sourcesSubscription.unsubscribe();
+        valuesSubscription.unsubscribe();
+    }
 
     const rx::observable<core::ContextPtr>& ReactiveNodeStream::observable() const{
         return subject.observable();

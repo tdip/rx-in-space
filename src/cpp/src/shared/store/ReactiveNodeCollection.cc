@@ -1,7 +1,6 @@
 #include "store/ReactiveNodeCollection.hh"
 
 #include "store/NodeEntryQuerySpace.hh"
-#include "store/ReactiveNodeStream.hh"
 
 namespace rx::space::store{
 
@@ -40,13 +39,8 @@ namespace rx::space::store{
     }
 
     IReactiveNodeStreamPtr ReactiveNodeCollection::query(const core::QueryArgs& query){
-        Key key = fromQuery(query);
-
-        if(reactiveNodes.find(key) == reactiveNodes.end()){
-            reactiveNodes.emplace(
-                std::piecewise_construct,
-                std::forward_as_tuple(key),
-                std::forward_as_tuple(NodeEntryQuerySpace::create(*this)));
-        }
+        auto result = std::make_shared<ReactiveNodeStream>(query, queryContext(false, query));
+        activeQueries.emplace_back(result);
+        return result;
     }
 }

@@ -36,7 +36,7 @@ namespace rx::space::store{
          * when there are no more queries that match it's output set.
          * This value will get destroyed when such event happens.
          */
-        virtual rx::composite_subscription subscribe(
+        virtual const rx::observable<core::ValuePtr> rx::composite_subscription subscribe(
             IReactiveQuerySpace&,
             OnValueNext&&) = 0;
     };

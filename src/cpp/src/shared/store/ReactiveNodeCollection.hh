@@ -11,6 +11,7 @@
 #include "store/IReactiveQuerySpace.hh"
 #include "store/Property.hh"
 #include "store/ReactiveNodeEntry.hh"
+#include "store/ReactiveNodeStream.hh"
 #include "store/QueryContext.hh"
 
 namespace rx::space::store{
@@ -53,7 +54,7 @@ namespace rx::space::store{
          */
         QueryContextPtr queryContext(bool isWeak, const core::QueryArgs&) const;
 
+        std::vector<std::weak_ptr<ReactiveNodeStream>> activeQueries;
         std::map<Key, ReactiveNodeEntry> reactiveNodes;
-        //std::map<Key, QueryInstanceWPtr> reactiveQueries;
     };
 }

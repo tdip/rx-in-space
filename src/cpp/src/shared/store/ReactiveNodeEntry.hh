@@ -18,7 +18,6 @@
 namespace rx::space::store{
 
     struct ReactiveNodeEntryContext : public ReactiveNodeContextBase{
-        const core::OutputSet nodeSet;
         /**
          * The query-space instance that used by this
          * node entry to subscribe to other values
@@ -45,8 +44,14 @@ namespace rx::space::store{
      * query is using it.
      */
     class ReactiveNodeEntry{
+
+    typedef std::shared_ptr<ReactiveNodeEntryContext> ContextPtr;
+    typedef std::weak_ptr<ReactiveNodeEntryContext> ContextWPtr;
+
     public:
         ReactiveNodeEntry(INodeReactiveQuerySpacePtr&&);
+
+        ~ReactiveNodeEntry();
 
         /**
          * Activate the node in order to subscribe to
@@ -69,10 +74,17 @@ namespace rx::space::store{
          * values for the set identified by this
          * node entry.
          */
-        void setNode(IReactiveNodePtr&&);
+        void setNode(IReactiveNodePtr&&) const;
 
     private:
-        const std::shared_ptr<ReactiveNodeEntryContext> context;
+        const ContextPtr context;
+
+        /**
+         * Called to make the node active, meaning
+         * that it will start participating in
+         * producing values of sets.
+         */
+        static void activateSubscriptionToNode(ContextWPtr);
 
         /**
          * Called whenever the underlying node produces a value. This
@@ -80,11 +92,14 @@ namespace rx::space::store{
          * Context and passes the resulting value to the observable
          * of the node entry.
          */
-        void onNodeValue(core::ValuePtr);
+        static void onNodeValue(ContextWPtr, core::ValuePtr);
 
-        bool unsubscribeNode();
-
-        void activateSubscriptionToNode();
+        /**
+         * Called to make the node inactive. It
+         * is used to indicate that no subscriber
+         * is interested in the node's set.
+         */
+        static bool unsubscribeNode(ContextWPtr);
     };
 
     using ReactiveNodeEntryPtr = std::unique_ptr<ReactiveNodeEntry>;

@@ -18,7 +18,7 @@ namespace rx::space::store{
 
     struct ReactiveNodeContextBase{
         const core::OutputSet nodeSet;
-        ReactiveNodeEntrySubject subject;
+        const ReactiveNodeEntrySubject subject;
     };
 
     struct ReactiveNodeInstanceContext{
@@ -32,6 +32,9 @@ namespace rx::space::store{
     using ReactiveNodeInstancePtr = std::unique_ptr<ReactiveNodeInstance>;
 
     class ReactiveNodeInstance{
+    
+    typedef std::shared_ptr<ReactiveNodeInstanceContext> ContextPtr;
+
     public:
         ReactiveNodeInstance(const bool, const std::shared_ptr<ReactiveNodeContextBase>);
         ~ReactiveNodeInstance();
@@ -43,6 +46,6 @@ namespace rx::space::store{
         }
 
     private:
-        const std::shared_ptr<ReactiveNodeInstanceContext> context;
+        const ContextPtr context;
     };
 }

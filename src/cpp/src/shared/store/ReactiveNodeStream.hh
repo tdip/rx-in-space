@@ -6,7 +6,6 @@
 
 #include "store/IReactiveNodeStream.hh"
 #include "store/QueryContext.hh"
-#include "store/ReactiveNodeStream.hh"
 
 #include "util/SimpleSubject.hh"
 
@@ -25,12 +24,14 @@ namespace rx::space::store{
 
     public:
         ReactiveNodeStream(
-            const core::QueryArgs& _query,
-            QueryContextPtr _queryInstance): 
-            queryInstance(std::move(_queryInstance)),
-            query(_query){}
+            const core::QueryArgs& _inputQuery,
+            QueryContextPtr&& _queryInstance);
+
+        ~ReactiveNodeStream();
 
         virtual const rx::observable<core::ContextPtr>& observable() const override;
+
+        const core::QueryArgs& query() const { return inputQuery; }
 
         static IReactiveNodeStreamPtr create(
             const core::QueryArgs& _query,
@@ -40,11 +41,10 @@ namespace rx::space::store{
         }
 
     private:
+        const core::QueryArgs inputQuery;
         const QueryContextPtr queryInstance;
-        const core::QueryArgs query;
         const util::SimpleSubject<core::ContextPtr> subject;
         const rx::composite_subscription sourcesSubscription;
-
         rx::composite_subscription valuesSubscription;
 
         /**
