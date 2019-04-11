@@ -28,7 +28,7 @@ namespace rx::space::store{
             outerSpace(_outerSpace),
             query(_query){}
 
-        virtual const rx::observable<ReactiveNodeValue>& observable() const override;
+        virtual const rx::observable<core::ContextPtr>& observable() const override;
 
         void activate();
 
@@ -36,7 +36,7 @@ namespace rx::space::store{
 
         private:
         IReactiveQuerySpace& outerSpace;
-        const util::SimpleSubject<ReactiveNodeValue> subject;
+        const util::SimpleSubject<core::ContextPtr> subject;
         const core::QueryArgs query;
         IReactiveNodeStreamPtr inner;
     };

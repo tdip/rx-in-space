@@ -3,6 +3,8 @@
 #include <memory>
 #include <vector>
 
+#include "core/Context.hh"
+
 #include "store/ReactiveNodeInstance.hh"
 
 namespace rx::space::store{
@@ -10,6 +12,8 @@ namespace rx::space::store{
     class QueryContext;
 
     using QueryContextPtr = std::unique_ptr<QueryContext>;
+
+    using QuerySources = std::shared_ptr<std::vector<rx::observable<core::ContextPtr>>>;
 
     /**
      * Class repsponsible for storing all the resources
@@ -20,6 +24,8 @@ namespace rx::space::store{
     public:
         QueryContext(std::vector<ReactiveNodeInstancePtr>&& _nodeInstances)
             : nodeInstances(std::move(_nodeInstances)) {}
+
+        const rx::observable<QuerySources>& sources() const;
 
         static QueryContextPtr create(
             std::vector<ReactiveNodeInstancePtr>&& _nodeInstances){

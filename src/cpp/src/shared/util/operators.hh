@@ -108,4 +108,25 @@ namespace rx::space::util{
                             [subscriber](CombineLatestValues<T> value){ subscriber.on_next(value); }));
             }));
     }
+
+    /**
+     * Combine all observables in the given vector into a single
+     * sequential observable.
+     * 
+     * Todo: optimize the loop
+     */
+    template<typename T>
+    const rx::observable<T> merge(std::vector<rx::observable<T>> oss){
+        if(oss.size() < 1){
+            return rx::empty<T>();
+        }
+
+        auto initial = oss[0];
+
+        for(size_t i = 1; i < oss.size(); i++){
+            initial = initial | rx::merge(oss[i]);
+        }
+
+        return initial;
+    }
 }

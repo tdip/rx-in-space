@@ -117,7 +117,7 @@ namespace rx::space::util{
 
         bool isActive() const { return !context->dispose.expired(); }
 
-        void onNext(T value){
+        void onNext(T value) const{
             onNextStatic(context, value);
         }
 

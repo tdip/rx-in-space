@@ -4,6 +4,8 @@
 #include <variant>
 #include <vector>
 
+#include "core/ValueAst.hh"
+
 namespace rx::space::core{
 
     class IScalar{
@@ -15,29 +17,7 @@ namespace rx::space::core{
     /**
      * Holder for reactive values
      */
-    class Value{
-        public:
-        explicit Value(std::variant<IScalarPtr, std::vector<Value>>&& _value)
-            : value(std::move(_value)){}
-
-        template<typename T>
-        constexpr bool holds_alternative() const {
-                return std::holds_alternative<T>(value);
-        }
-
-        template<typename T>
-        constexpr T get() const{
-                return std::get<T>(value);
-        }
-
-        template<typename T>
-        constexpr T& get() {
-                return std::get<T>(value);
-        }
-        
-        private:
-            std::variant<IScalarPtr, std::vector<Value>> value;
-    };
+    using Value = ValueAst<IScalarPtr>;
 
     using ValuePtr = std::shared_ptr<Value>;
 }

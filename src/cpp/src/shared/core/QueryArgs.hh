@@ -13,6 +13,6 @@ namespace rx::space::core{
     struct QueryArgs{
         QuerySet query;
         Type type;
-        merge::MergeStrategy mergeStrategy;
+        MergeStrategy mergeStrategy;
     };
 }

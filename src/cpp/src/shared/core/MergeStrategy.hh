@@ -4,7 +4,7 @@
 #include <variant>
 #include <vector>
 
-namespace rx::space::merge{
+namespace rx::space::core{
 
     enum MergeStrategyBase{
         Sequence,

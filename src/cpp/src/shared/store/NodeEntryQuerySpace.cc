@@ -40,13 +40,13 @@ namespace rx::space::store{
         }
     }
 
-    const rx::observable<ReactiveNodeValue>& NodeEntryQuerySpaceStream::observable() const{
+    const rx::observable<core::ContextPtr>& NodeEntryQuerySpaceStream::observable() const{
         return subject.observable();
     }
 
     void NodeEntryQuerySpaceStream::activate(){
         inner = outerSpace.query(query);
-        inner->observable().subscribe([this](ReactiveNodeValue value){ subject.onNext(value); });
+        inner->observable().subscribe([this](core::ContextPtr value){ subject.onNext(value); });
     }
 
     void NodeEntryQuerySpaceStream::deactivate(){

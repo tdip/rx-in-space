@@ -2,7 +2,15 @@
 
 #include <memory>
 
+#include "core/ValueAst.hh"
+
 namespace rx::space::core{
+
+    class IValuePropsEntry{};
+
+    using IValuePropsEntryPtr = std::shared_ptr<IValuePropsEntry>;
+
+    using ValueProps = ValueAst<IValuePropsEntryPtr>;
 
     class Context;
 
@@ -17,5 +25,7 @@ namespace rx::space::core{
     class Context{
         public:
         static ContextPtr create();
+
+        const ValueProps& properties() const;
     };
 }
