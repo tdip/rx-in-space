@@ -6,12 +6,12 @@
 
 #include "core/Context.hh"
 
-namespace rx::space::store{
+namespace rx::space::store::types{
 
-    class IReactiveNodeStream{
+    class IReactiveMemberStream{
         public:
         virtual const rx::observable<core::ContextPtr>& observable() const = 0;
     };
 
-    using IReactiveNodeStreamPtr = std::shared_ptr<IReactiveNodeStream>;
+    using IReactiveMemberStreamPtr = std::shared_ptr<IReactiveMemberStream>;
 }
