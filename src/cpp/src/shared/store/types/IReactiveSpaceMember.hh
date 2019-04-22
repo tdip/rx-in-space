@@ -12,7 +12,9 @@
 #include "core/QuerySet.hh"
 #include "core/Value.hh"
 
+
 #include "store/types/IReactiveQuerySpace.hh"
+#include "store/types/ReactiveMemberValueStream.hh"
 
 namespace rx::space::store::types{
 
@@ -20,7 +22,7 @@ namespace rx::space::store::types{
 
     using IReactiveSpaceMemberPtr = std::shared_ptr<IReactiveSpaceMember>;
 
-    using MemberValue = std::variant<IReactiveMemberStreamPtr, IReactiveSpaceMemberPtr>;
+    using MemberValue = std::variant<ReactiveMemberValueStream, IReactiveSpaceMemberPtr>;
 
     /**
      * This interface corresponds to a member that belongs to a reactive
@@ -36,6 +38,6 @@ namespace rx::space::store::types{
          * return another reactive space that will be subsequently queried using the same
          * query.
          */
-        virtual const MemberValue query(IReactiveQuerySpace&, const core::QueryArgs&) = 0;
+        virtual const MemberValue query(const IReactiveQuerySpace&, const core::QueryArgs&) = 0;
     };
 }

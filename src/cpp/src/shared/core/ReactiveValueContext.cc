@@ -1,7 +1,7 @@
 #include "core/Context.hh"
 
 namespace rx::space::core{
-    ContextPtr merge(std::vector<ContextPtr>& items){
+    ReactiveValueContextPtr merge(std::vector<ContextPtr>& items){
         std::vector<Value> values;
         std::vector<ValueProps> props;
         values.reserve(items.size());

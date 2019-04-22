@@ -15,9 +15,9 @@ namespace rx::space::core{
 
     using ValuePropsPtr = std::shared_ptr<ValueProps>;
 
-    class Context;
+    class ReactiveValueContext;
 
-    using ContextPtr = std::shared_ptr<Context>;
+    using ReactiveValueContextPtr = std::shared_ptr<ReactiveValueContext>;
 
     /**
      * Type referring to value container that
@@ -25,15 +25,15 @@ namespace rx::space::core{
      * can be used within the same reactive
      * space.
      */
-    class Context{
+    class ReactiveValueContext{
         public:
-        Context(ValuePropsPtr __properties, ValuePtr __value):
+        ReactiveValueContext(ValuePropsPtr __properties, ValuePtr __value):
             _properties(__properties),
             _value(__value) {}
 
-        static ContextPtr create(ValuePropsPtr, ValuePtr);
+        static ReactiveValueContextPtr create(ValuePropsPtr, ValuePtr);
 
-        static ContextPtr merge(std::vector<ContextPtr>);
+        static ReactiveValueContextPtr merge(std::vector<ReactiveValueContextPtr>);
 
         const ValuePropsPtr properties() const { return _properties; }
         const ValuePtr value() const { return _value; }

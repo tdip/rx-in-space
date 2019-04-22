@@ -66,6 +66,8 @@ namespace rx::space::util{
     public:
         ObservableSubjectBase(ContextPtr&& _context): context(std::move(_context)) {}
 
+        ObservableSubjectBase(const ContextPtr& _context): context(_context) {}
+
         ObservableSubjectBase():
             context(std::make_shared<ObservableSubjectBaseContext<T>>()) {}
 
