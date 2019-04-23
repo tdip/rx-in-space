@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -10,6 +11,7 @@
 #include "store/infrastructure/Key.hh"
 #include "store/infrastructure/ReactiveMemberEntry.hh"
 #include "store/infrastructure/ReactiveMemberInstance.hh"
+#include "store/infrastructure/ReactiveQueryAggregator.hh"
 
 namespace rx::space::store::infrastructure{
 
@@ -19,7 +21,9 @@ namespace rx::space::store::infrastructure{
 
     struct ReactiveQueryInstanceContext{
         const ReactiveQueryContextBasePtr queryContext;
+        const types::ReactiveMemberValueSimpleSubject subject;
         std::unordered_map<Key, ReactiveMemberInstancePtr> members;
+        rx::composite_subscription aggregatorSubscription;
     };
 
     /**
@@ -34,7 +38,9 @@ namespace rx::space::store::infrastructure{
     public:
         ReactiveQueryInstance(
             const ReactiveQueryContextBasePtr&,
-            std::vector<ReactiveMemberEntry*>&);
+            std::vector<std::reference_wrapper<ReactiveMemberEntry>>&);
+
+        ~ReactiveQueryInstance();
 
         const types::ReactiveMemberValueStream& stream() const;
 
@@ -42,9 +48,9 @@ namespace rx::space::store::infrastructure{
             const ReactiveQueryContextBasePtr& queryContext,
             std::vector<ReactiveMemberEntry*>& members){
 
-        return std::make_unique<ReactiveQueryInstance>(
-            queryContext,
-            members);
+            return std::make_shared<ReactiveQueryInstance>(
+                queryContext,
+                members);
         }
 
     private:

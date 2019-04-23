@@ -4,7 +4,11 @@
 
 #include "core/ReactiveValueContext.hh"
 
+#include "util/SimpleSubject.hh"
+
 namespace rx::space::store::types{
 
     using ReactiveMemberValueStream = rx::observable<core::ReactiveValueContextPtr>;
+
+    using ReactiveMemberValueSimpleSubject = util::SimpleSubject<core::ReactiveValueContextPtr>;
 }

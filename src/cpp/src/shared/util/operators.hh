@@ -116,7 +116,7 @@ namespace rx::space::util{
      * Todo: optimize the loop
      */
     template<typename T>
-    const rx::observable<T> merge(std::vector<rx::observable<T>> oss){
+    const rx::observable<T> merge(std::vector<std::reference_wrapper<const rx::observable<T>>>& oss){
         if(oss.size() < 1){
             return rx::empty<T>();
         }

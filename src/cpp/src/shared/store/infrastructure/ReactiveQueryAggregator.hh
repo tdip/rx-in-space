@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <vector>
 
 #include "core/Query.hh"
@@ -17,10 +18,16 @@ namespace rx::space::store::infrastructure{
     public:
         ReactiveQueryAggregator(
             const core::Query&,
-            std::vector<types::ReactiveMemberValueStream&>);
+            std::vector<std::reference_wrapper<const types::ReactiveMemberValueStream>>&);
 
         ~ReactiveQueryAggregator();
 
         const types::ReactiveMemberValueStream& steam() const;
+
+        static types::ReactiveMemberValueStream aggregator(
+            const core::Query&,
+            std::vector<std::reference_wrapper<const types::ReactiveMemberValueStream>>&);
+    private:
+        types::ReactiveMemberValueStream _stream;
     };
 }
