@@ -3,21 +3,21 @@
 namespace rx::space::store::infrastructure{
 
     ActiveMemberContext::ActiveMemberContext(
-        const core::Query& query,
-        const types::IReactiveQuerySpace& space,
+        const ReactiveQueryContextBasePtr& queryContext,
         const types::IReactiveSpaceMemberPtr _activeMember,
         const std::function<void(core::ReactiveValueContextPtr)> action) : activeMember(_activeMember){
 
-        types::MemberValue result = activeMember->query(space, query);
+        types::MemberValue result = activeMember->query(
+            *queryContext->space,
+            queryContext->query);
 
         if(std::holds_alternative<types::ReactiveMemberValueStream>(result)){
             const_cast<rx::composite_subscription&>(activeMemberSubscription) = std::get<types::ReactiveMemberValueStream>(result)
                 .subscribe(action);
         }else if(std::holds_alternative<types::IReactiveSpaceMemberPtr>(result)){
             const_cast<std::unique_ptr<ReactiveMemberInstance>&>(activeMemberInstance) = std::make_unique<ReactiveMemberInstance>(
-                query,
-                std::get<types::IReactiveSpaceMemberPtr>(result),
-                space);
+                queryContext,
+                std::get<types::IReactiveSpaceMemberPtr>(result));
             const_cast<rx::composite_subscription&>(activeMemberSubscription) = activeMemberInstance
                 ->stream()
                 .subscribe(action);
@@ -29,23 +29,20 @@ namespace rx::space::store::infrastructure{
     }
 
     ReactiveMemberInstance::ReactiveMemberInstance(
-        const core::Query& query,
-        types::IReactiveSpaceMemberPtr member,
-        const types::IReactiveQuerySpacePtr space) :
+        const ReactiveQueryContextBasePtr& queryContext,
+        types::IReactiveSpaceMemberPtr member) :
         ReactiveMemberInstance(
+            queryContext,
             types::ReactiveContextTransform::identity(),
-            query,
-            member,
-            space) {}
+            member) {}
 
     ReactiveMemberInstance::ReactiveMemberInstance(
+        const ReactiveQueryContextBasePtr& queryContext,
         const types::ReactiveContextTransformPtr contextMapper,
-        const core::Query& query,
-        types::IReactiveSpaceMemberPtr member,
-        const types::IReactiveQuerySpacePtr space) :
+        types::IReactiveSpaceMemberPtr member) :
             context(new ReactiveMemberInstanceContext{
+                queryContext,
                 util::SimpleSubject<core::ReactiveValueContextPtr>(),
-                space,
                 contextMapper,
                 nullptr
             }),
@@ -56,8 +53,7 @@ namespace rx::space::store::infrastructure{
                 }){
             
             context->activeMemberContext = std::make_unique<ActiveMemberContext>(
-                query,
-                space,
+                queryContext,
                 member,
                 onActiveMemberValue);
         }
@@ -67,12 +63,11 @@ namespace rx::space::store::infrastructure{
     }
 
     void ReactiveMemberInstance::setActiveMember(
-        const core::Query& query,
         types::IReactiveSpaceMemberPtr member){
 
         context->activeMemberContext = std::make_unique<ActiveMemberContext>(
-            query,
-            context->space,
+            context->queryContext->query,
+            context->queryContext->space,
             member,
             onActiveMemberValue);
     }

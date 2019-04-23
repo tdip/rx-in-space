@@ -10,6 +10,8 @@
 #include "store/types/ReactiveContextTransform.hh"
 #include "store/types/ReactiveMemberValueStream.hh"
 
+#include "store/infrastructure/Context.hh"
+
 #include "util/SimpleSubject.hh"
 
 namespace rx::space::store::infrastructure{
@@ -25,8 +27,7 @@ namespace rx::space::store::infrastructure{
     class ActiveMemberContext{
     public:
         ActiveMemberContext(
-            const core::Query&,
-            const types::IReactiveQuerySpace&,
+            const ReactiveQueryContextBasePtr& queryContext,
             const types::IReactiveSpaceMemberPtr,
             const std::function<void(core::ReactiveValueContextPtr)>);
 
@@ -38,8 +39,8 @@ namespace rx::space::store::infrastructure{
     };
 
     struct ReactiveMemberInstanceContext{
+        const ReactiveQueryContextBasePtr queryContext;
         const util::SimpleSubject<core::ReactiveValueContextPtr> subject;
-        const types::IReactiveQuerySpacePtr space;
         const types::ReactiveContextTransformPtr contextMapper;
         std::unique_ptr<ActiveMemberContext> activeMemberContext;
     };
@@ -57,19 +58,23 @@ namespace rx::space::store::infrastructure{
 
     public:
         ReactiveMemberInstance(
-            const core::Query&,
-            types::IReactiveSpaceMemberPtr,
-            const types::IReactiveQuerySpacePtr);
+            const ReactiveQueryContextBasePtr& queryContext,
+            types::IReactiveSpaceMemberPtr);
 
         ReactiveMemberInstance(
+            const ReactiveQueryContextBasePtr& queryContext,
             const types::ReactiveContextTransformPtr,
-            const core::Query&,
-            types::IReactiveSpaceMemberPtr,
-            const types::IReactiveQuerySpacePtr);
+            types::IReactiveSpaceMemberPtr);
+
+        template<typename ...Args>
+        static ReactiveMemberInstancePtr create(Args ...args){
+            return std::make_shared<ReactiveMemberInstance>(
+                std::forward<Args>(args));
+        }
 
         const types::ReactiveMemberValueStream& stream() const;
 
-        void setActiveMember(const core::Query&, types::IReactiveSpaceMemberPtr);
+        void setActiveMember(types::IReactiveSpaceMemberPtr);
 
     private:
         const ContextPtr context;

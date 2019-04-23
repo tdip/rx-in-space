@@ -2,34 +2,32 @@
 
 namespace rx::space::store::infrastructure{
 
-    std::vector<ReactiveMemberInstancePtr> queryMembers(
-        const core::Query& query,
-        const IReactiveQuerySpacePtr space,
+    std::unordered_map<Key, ReactiveMemberInstancePtr> queryMembers(
+        const ReactiveQueryContextBasePtr& queryContext,
         std::vector<ReactiveMemberEntry*>& entries){
 
-        std::vector<ReactiveMemberInstancePtr> result;
+        std::unordered_map<Key, ReactiveMemberInstancePtr> result;
         result.reserve(entries.size());
 
         for(
             auto&& entry = entries.begin();
             entry != entries.end();
-            entries++){
+            entry++){
 
-            result.emplace_back(
-                query,
-                (*entry)->getMember(),
-                space);
+            auto&& value = *entry;
+            result.emplace(
+                std::make_pair(
+                    fromOutputSet(value->outputSet()),
+                    ReactiveMemberInstance::create(queryContext, value->getMember())));
         }
 
         return result;
     }
 
     ReactiveQueryInstance::ReactiveQueryInstance(
-        const core::Query& query,
-        const IReactiveQuerySpacePtr space,
-        std::vector<ReactiveMemberEntry*>& entries)
-        : context(new ReactiveQueryInstanceContext{
-            query,
-            std::move(_nodeInstances),
-            queryMembers(query, space, entries)}) {}
+        const ReactiveQueryContextBasePtr& queryContext,
+        std::vector<ReactiveMemberEntry*>& entries) :
+            context(new ReactiveQueryInstanceContext{
+                queryContext,
+                queryMembers(queryContext, entries)}) {}
 }

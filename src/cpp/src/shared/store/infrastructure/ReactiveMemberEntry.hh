@@ -7,6 +7,7 @@
 #include "rx.hh"
 
 #include "core/Query.hh"
+#include "core/OutputSet.hh"
 
 #include "store/types/IReactiveSpaceMember.hh"
 
@@ -15,7 +16,7 @@
 namespace rx::space::store::infrastructure{
 
     struct ReactiveMemberEntryContext{
-
+        const core::OutputSet outputSet;
         /**
          * The current node that provides values to the set
          * corresponding to this node entry.
@@ -39,6 +40,8 @@ namespace rx::space::store::infrastructure{
 
         ~ReactiveMemberEntry();
 
+
+        const core::OutputSet& outputSet() const;
 
         /**
          * Check whether this node belongs to

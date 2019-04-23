@@ -6,16 +6,20 @@
 
 #include "core/Query.hh"
 
+#include "store/infrastructure/Context.hh"
+#include "store/infrastructure/Key.hh"
 #include "store/infrastructure/ReactiveMemberEntry.hh"
 #include "store/infrastructure/ReactiveMemberInstance.hh"
 
 namespace rx::space::store::infrastructure{
 
+    class ReactiveQueryInstance;
+
+    using ReactiveQueryInstancePtr = std::shared_ptr<ReactiveQueryInstance>;
 
     struct ReactiveQueryInstanceContext{
-        const core::Query query;
-        const IReactiveQuerySpacePtr space,
-        std::vector<ReactiveMemberInstancePtr> members;
+        const ReactiveQueryContextBasePtr queryContext;
+        std::unordered_map<Key, ReactiveMemberInstancePtr> members;
     };
 
     /**
@@ -29,16 +33,18 @@ namespace rx::space::store::infrastructure{
 
     public:
         ReactiveQueryInstance(
-            const core::Query&,
-            const IReactiveQuerySpacePtr,
+            const ReactiveQueryContextBasePtr&,
             std::vector<ReactiveMemberEntry*>&);
 
-        const rx::observable<QuerySources>& sources() const;
+        const types::ReactiveMemberValueStream& stream() const;
 
-        static QueryContextPtr create(
-            std::vector<ReactiveNodeInstancePtr>&& _nodeInstances){
-            
-            return std::make_unique<QueryContext>(std::move(_nodeInstances));
+        static ReactiveQueryInstancePtr create(
+            const ReactiveQueryContextBasePtr& queryContext,
+            std::vector<ReactiveMemberEntry*>& members){
+
+        return std::make_unique<ReactiveQueryInstance>(
+            queryContext,
+            members);
         }
 
     private:
