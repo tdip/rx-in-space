@@ -10,7 +10,7 @@ namespace rx::space::core{
      * to and the mechanism that will be used to aggregate the
      * values comming from different nodes.
      */
-    struct QueryArgs{
+    struct Query{
         QuerySet query;
         Type type;
         MergeStrategy mergeStrategy;

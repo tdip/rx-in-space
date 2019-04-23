@@ -6,5 +6,5 @@
 
 namespace rx::space::store::types{
 
-    using ReactiveMemberValueStream = rx::observable<core::ReactiveValueContext>;
+    using ReactiveMemberValueStream = rx::observable<core::ReactiveValueContextPtr>;
 }

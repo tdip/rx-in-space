@@ -1,7 +1,7 @@
-#include "core/Context.hh"
+#include "core/ReactiveValueContext.hh"
 
 namespace rx::space::core{
-    ReactiveValueContextPtr merge(std::vector<ContextPtr>& items){
+    ReactiveValueContextPtr merge(std::vector<ReactiveValueContextPtr>& items){
         std::vector<Value> values;
         std::vector<ValueProps> props;
         values.reserve(items.size());
@@ -18,6 +18,6 @@ namespace rx::space::core{
         ValuePtr value = std::make_shared<Value>(std::move(values));
         ValuePropsPtr properties = std::make_shared<ValueProps>(std::move(props));
 
-        return Context::create(value, properties);
+        return ReactiveValueContext::create(properties, value);
     }
 }

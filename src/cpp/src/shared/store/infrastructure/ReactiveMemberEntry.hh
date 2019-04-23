@@ -6,8 +6,7 @@
 
 #include "rx.hh"
 
-#include "core/Context.hh"
-#include "core/QueryArgs.hh"
+#include "core/Query.hh"
 
 #include "store/types/IReactiveSpaceMember.hh"
 
@@ -40,22 +39,23 @@ namespace rx::space::store::infrastructure{
 
         ~ReactiveMemberEntry();
 
+
         /**
          * Check whether this node belongs to
          * the set specified by the given
          * Query and if all required properties
          * are in the query.
          */
-        bool matches(const core::QueryArgs&) const;
+        bool matches(const core::Query&) const;
 
-
+        types::IReactiveSpaceMemberPtr getMember() const;
 
         /**
          * Change the reactive node that produces the
          * values for the set identified by this
          * node entry.
          */
-        void setNode(types::IReactiveSpaceMemberPtr&&) const;
+        void setMember(types::IReactiveSpaceMemberPtr&&) const;
 
     private:
         const ContextPtr context;

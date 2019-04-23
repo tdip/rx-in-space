@@ -3,7 +3,7 @@
 namespace rx::space::store::infrastructure{
 
     ActiveMemberContext::ActiveMemberContext(
-        const core::QueryArgs& query,
+        const core::Query& query,
         const types::IReactiveQuerySpace& space,
         const types::IReactiveSpaceMemberPtr _activeMember,
         const std::function<void(core::ReactiveValueContextPtr)> action) : activeMember(_activeMember){
@@ -29,13 +29,24 @@ namespace rx::space::store::infrastructure{
     }
 
     ReactiveMemberInstance::ReactiveMemberInstance(
-        const core::QueryArgs& query,
+        const core::Query& query,
+        types::IReactiveSpaceMemberPtr member,
+        const types::IReactiveQuerySpacePtr space) :
+        ReactiveMemberInstance(
+            types::ReactiveContextTransform::identity(),
+            query,
+            member,
+            space) {}
+
+    ReactiveMemberInstance::ReactiveMemberInstance(
+        const types::ReactiveContextTransformPtr contextMapper,
+        const core::Query& query,
         types::IReactiveSpaceMemberPtr member,
         const types::IReactiveQuerySpacePtr space) :
             context(new ReactiveMemberInstanceContext{
-                query,
                 util::SimpleSubject<core::ReactiveValueContextPtr>(),
                 space,
+                contextMapper,
                 nullptr
             }),
             wContext(context),
@@ -55,9 +66,12 @@ namespace rx::space::store::infrastructure{
         return context->subject.observable();
     }
 
-    void ReactiveMemberInstance::setActiveMember(types::IReactiveSpaceMemberPtr member){
+    void ReactiveMemberInstance::setActiveMember(
+        const core::Query& query,
+        types::IReactiveSpaceMemberPtr member){
+
         context->activeMemberContext = std::make_unique<ActiveMemberContext>(
-            context->query,
+            query,
             context->space,
             member,
             onActiveMemberValue);
@@ -70,6 +84,7 @@ namespace rx::space::store::infrastructure{
         ContextPtr context = wContext.lock();
 
         if(context){
+            // Todo: add context of current member
             context->subject.onNext(value);
         }
     }

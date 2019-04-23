@@ -8,10 +8,9 @@
 #include "rx.hh"
 
 #include "core/OutputSet.hh"
-#include "core/QueryArgs.hh"
+#include "core/Query.hh"
 #include "core/QuerySet.hh"
 #include "core/Value.hh"
-
 
 #include "store/types/IReactiveQuerySpace.hh"
 #include "store/types/ReactiveMemberValueStream.hh"
@@ -38,6 +37,6 @@ namespace rx::space::store::types{
          * return another reactive space that will be subsequently queried using the same
          * query.
          */
-        virtual const MemberValue query(const IReactiveQuerySpace&, const core::QueryArgs&) = 0;
+        virtual const MemberValue query(const IReactiveQuerySpace&, const core::Query&) = 0;
     };
 }

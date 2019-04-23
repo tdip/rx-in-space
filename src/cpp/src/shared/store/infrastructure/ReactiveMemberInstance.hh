@@ -2,11 +2,13 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 
 #include "core/ReactiveValueContext.hh"
 
-#include "store/types/ReactiveMemberValueStream.hh"
 #include "store/types/IReactiveSpaceMember.hh"
+#include "store/types/ReactiveContextTransform.hh"
+#include "store/types/ReactiveMemberValueStream.hh"
 
 #include "util/SimpleSubject.hh"
 
@@ -23,7 +25,7 @@ namespace rx::space::store::infrastructure{
     class ActiveMemberContext{
     public:
         ActiveMemberContext(
-            const core::QueryArgs&,
+            const core::Query&,
             const types::IReactiveQuerySpace&,
             const types::IReactiveSpaceMemberPtr,
             const std::function<void(core::ReactiveValueContextPtr)>);
@@ -36,9 +38,9 @@ namespace rx::space::store::infrastructure{
     };
 
     struct ReactiveMemberInstanceContext{
-        const core::QueryArgs query;
         const util::SimpleSubject<core::ReactiveValueContextPtr> subject;
         const types::IReactiveQuerySpacePtr space;
+        const types::ReactiveContextTransformPtr contextMapper;
         std::unique_ptr<ActiveMemberContext> activeMemberContext;
     };
 
@@ -55,13 +57,19 @@ namespace rx::space::store::infrastructure{
 
     public:
         ReactiveMemberInstance(
-            const core::QueryArgs&,
+            const core::Query&,
+            types::IReactiveSpaceMemberPtr,
+            const types::IReactiveQuerySpacePtr);
+
+        ReactiveMemberInstance(
+            const types::ReactiveContextTransformPtr,
+            const core::Query&,
             types::IReactiveSpaceMemberPtr,
             const types::IReactiveQuerySpacePtr);
 
         const types::ReactiveMemberValueStream& stream() const;
 
-        void setActiveMember(types::IReactiveSpaceMemberPtr);
+        void setActiveMember(const core::Query&, types::IReactiveSpaceMemberPtr);
 
     private:
         const ContextPtr context;
@@ -70,4 +78,6 @@ namespace rx::space::store::infrastructure{
 
         static void onMemberInstanceValue(const ContextWPtr, core::ReactiveValueContextPtr);
     };
+
+    using ReactiveMemberInstancePtr = std::shared_ptr<ReactiveMemberInstance>;
 }

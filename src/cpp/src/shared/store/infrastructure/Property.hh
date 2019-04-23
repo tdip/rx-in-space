@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace rx::space::store{
+namespace rx::space::store::infrastructure{
 
     using Predicate = std::string;
 
