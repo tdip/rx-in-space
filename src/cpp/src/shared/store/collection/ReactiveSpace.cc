@@ -4,12 +4,24 @@ namespace rx::space::store::collection{
 
     const ReactiveMemberValueStream ReactiveSpace::query(const core::Query& query){
         std::vector<std::reference_wrapper<ReactiveMemberEntry>> entries;
+        auto&& activeQueries = context->activeQueries;
+        auto&& members = context->members;
+
+        for(
+            auto&& member = members.begin();
+            member != members.end();
+            member++){
+
+            if(member->second.matches(query)){
+                entries.push_back(member->second);
+            }
+        }
 
         std::shared_ptr<ReactiveQueryInstance> queryInstance = ReactiveQueryInstance::create(
             query,
             getQuerySubspace(query),
             entries);
-        context->activeQueries.push_back(queryInstance);
+        activeQueries.push_back(queryInstance);
 
         return rx::create<core::ReactiveValueContextPtr>(
             [queryInstance]

@@ -4,15 +4,10 @@
 #include <variant>
 #include <vector>
 
+#include "core/IScalar.hh"
 #include "core/ValueAst.hh"
 
 namespace rx::space::core{
-
-    class IScalar{
-
-    };
-
-    using IScalarPtr = std::shared_ptr<IScalar>;
 
     /**
      * Holder for reactive values

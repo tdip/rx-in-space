@@ -40,9 +40,6 @@ namespace rx::space::store::infrastructure{
             const core::OutputSet&,
             const types::IReactiveSpaceMemberPtr&);
 
-        ~ReactiveMemberEntry();
-
-
         const core::OutputSet& outputSet() const;
 
         /**
@@ -60,7 +57,7 @@ namespace rx::space::store::infrastructure{
          * values for the set identified by this
          * node entry.
          */
-        void setMember(types::IReactiveSpaceMemberPtr&&) const;
+        // void setMember(types::IReactiveSpaceMemberPtr&&) const;
 
     private:
         const ContextPtr context;

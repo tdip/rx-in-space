@@ -2,13 +2,12 @@
 
 namespace rx::space::store::infrastructure{
 
-    Key fromQuery(core::Query& args){
+    Key fromMemberProperties(const core::MemberProperties& properties){
         Key key;
-        const core::QuerySet& query = args.query;
 
         for(
-            auto&& item = query.begin();
-            item != query.end();
+            auto&& item = properties.begin();
+            item != properties.end();
             item++){
 
             if(std::holds_alternative<std::string>(item->second)){
@@ -17,5 +16,14 @@ namespace rx::space::store::infrastructure{
         }
 
         return std::move(key);
+    }
+
+
+    Key fromQuery(core::Query& args){
+        return fromMemberProperties(args.query);
+    }
+
+    Key fromOutputSet(const core::OutputSet& outputSet){
+        return fromMemberProperties(outputSet.properties);
     }
 }

@@ -5,13 +5,9 @@
 #include <variant>
 #include <vector>
 
-#include "core/QuerySet.hh"
+#include "core/MemberProperty.hh"
 
 namespace rx::space::core{
-
-    using FieldPredicate = std::string;
-
-    using OutputSetPredicate = std::variant<FieldPredicate>;
 
     /**
      * Indicates that all items of the set are accessible
@@ -30,9 +26,9 @@ namespace rx::space::core{
      * accesible.
      */
     struct OutputSet{
-        std::map<std::string, OutputSetPredicate> predicates;
+        MemberProperties properties;
         std::vector<OutputSetSelector> selectors;
 
-        bool matches(const QuerySet&) const;
+        // bool matches(const QuerySet&) const;
     };
 }

@@ -1,7 +1,7 @@
 #pragma once
 
+#include "core/MemberProperty.hh"
 #include "core/MergeStrategy.hh"
-#include "core/QuerySet.hh"
 #include "core/Type.hh"
 
 namespace rx::space::core{
@@ -11,8 +11,7 @@ namespace rx::space::core{
      * values comming from different nodes.
      */
     struct Query{
-        QuerySet query;
-        Type type;
+        MemberProperties query;
         MergeStrategy mergeStrategy;
     };
 }

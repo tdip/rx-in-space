@@ -2,14 +2,24 @@
 
 namespace rx::space::store::infrastructure{
 
-    ReactiveMemberEntry::~ReactiveMemberEntry(){
-        unsubscribeNode(context);
+    ReactiveMemberEntry::ReactiveMemberEntry(
+        const core::OutputSet& outputSet,
+        const types::IReactiveSpaceMemberPtr& activeNode) :
+        context(std::make_shared<ReactiveMemberEntryContext>(
+            new ReactiveMemberEntryContext{
+                outputSet,
+                activeNode
+            })) {}
+
+    const core::OutputSet& ReactiveMemberEntry::outputSet() const{
+        return context->outputSet;
     }
 
-    ReactiveMemberEntry::ReactiveMemberEntry() :
-        context(new ReactiveNodeEntryContext{ nullptr }) {}
+    bool ReactiveMemberEntry::matches(const core::Query&) const{
+        return true;
+    }
 
-    void ReactiveMemberEntry::setMember(types::IReactiveSpaceMemberPtr&& member) const;
-        context->activeNode = std::move(member);
+    types::IReactiveSpaceMemberPtr ReactiveMemberEntry::getMember() const{
+        return context->activeNode;
     }
 }

@@ -7,7 +7,10 @@
                 "${workspaceFolder}/src/cpp/modules/RxCpp/Rx/v2/src/**",
                 "${workspaceFolder}/src/cpp/src/include",
                 "${workspaceFolder}/src/cpp/src/platform",
-                "${workspaceFolder}/src/cpp/src/shared"
+                "${workspaceFolder}/src/cpp/src/shared",
+                "${workspaceFolder}/node_modules/nan/",
+                "/home/quantifio/.nvm/versions/node/v8.9.4/include/node/",
+                "${workspaceFolder}/src/cpp/src/platform/node/support"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",
