@@ -6,6 +6,8 @@
 
 #include "quantifio/helpers.hh"
 
+#include "rxjs/NodeSubscription.hh"
+
 namespace rx::platform::node{
 
     const rx::observable<v8::Local<v8::Value>> NodeObservableWrap::toCppObservable(v8::Local<v8::Object> observable){
@@ -47,9 +49,7 @@ namespace rx::platform::node{
             .As<v8::Object>();
 
         rx::composite_subscription result;
-        result.add([subscription = Nan::Persistent<v8::Object>(subscription)](){
-
-        });
+        result.add(NodeSubscription::toCppSubscription(subscription));
 
         return result;
     }
