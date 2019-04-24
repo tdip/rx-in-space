@@ -36,7 +36,9 @@ namespace rx::space::store::infrastructure{
     typedef std::shared_ptr<ReactiveMemberEntryContext> ContextPtr;
 
     public:
-        ReactiveMemberEntry();
+        ReactiveMemberEntry(
+            const core::OutputSet&,
+            const types::IReactiveSpaceMemberPtr&);
 
         ~ReactiveMemberEntry();
 

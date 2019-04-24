@@ -40,17 +40,19 @@ namespace rx::space::store::infrastructure{
             const ReactiveQueryContextBasePtr&,
             std::vector<std::reference_wrapper<ReactiveMemberEntry>>&);
 
+        ReactiveQueryInstance(
+            const core::Query&,
+            const types::IReactiveQuerySpacePtr&,
+            std::vector<std::reference_wrapper<ReactiveMemberEntry>>&);
+
         ~ReactiveQueryInstance();
 
         const types::ReactiveMemberValueStream& stream() const;
 
-        static ReactiveQueryInstancePtr create(
-            const ReactiveQueryContextBasePtr& queryContext,
-            std::vector<ReactiveMemberEntry*>& members){
-
+        template<typename ...Args>
+        static ReactiveQueryInstancePtr create(Args&& ...args){
             return std::make_shared<ReactiveQueryInstance>(
-                queryContext,
-                members);
+                std::forward<Args>(args));
         }
 
     private:

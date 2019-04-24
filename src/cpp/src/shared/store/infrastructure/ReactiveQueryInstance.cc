@@ -58,6 +58,15 @@ namespace rx::space::store::infrastructure{
                 });
     }
 
+        ReactiveQueryInstance(
+            const core::Query& query,
+            const types::IReactiveQuerySpacePtr& space,
+            std::vector<std::reference_wrapper<ReactiveMemberEntry>>& entries) :
+            context(new ReactiveMemberEntryContext{
+                std::make_shared<ReactiveQueryContextBase>({query, space}),
+                entries
+            }){}
+
     const types::ReactiveMemberValueStream& ReactiveQueryInstance::stream() const{
         return context->subject.observable();
     }
