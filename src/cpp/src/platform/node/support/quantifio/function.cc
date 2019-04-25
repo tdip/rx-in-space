@@ -16,7 +16,9 @@ namespace v8::quantifio{
         const int argc = 1;
         v8::Local<v8::Value> argv[argc] = { obj };
 
-        return Nan::CallAsFunction(nodeBind, fn, argc, argv).ToLocalChecked();
+        return Nan::CallAsFunction(nodeBind, fn, argc, argv)
+            .ToLocalChecked()
+            .As<v8::Function>();
     }
 
     bool getBound(
@@ -26,7 +28,7 @@ namespace v8::quantifio{
             return false;
         }
 
-        result = bind(obj, result);
+        result = bind(result, obj);
         return true;
     }
 }

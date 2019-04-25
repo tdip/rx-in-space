@@ -6,7 +6,7 @@
 
 namespace rx::platform::node{
 
-    void unsubscribe(Nan::Persistent<v8::Object> persistentSubscription){
+    void unsubscribe(const Nan::Persistent<v8::Object>& persistentSubscription){
         v8::Local<v8::Object> subscription = persistentSubscription.Get(
             Nan::GetCurrentContext()->GetIsolate());
 
@@ -27,10 +27,12 @@ namespace rx::platform::node{
 
     rx::composite_subscription NodeSubscription::toCppSubscription(v8::Local<v8::Object> localSubscription){
         rx::composite_subscription result;
-
         result.add(
-            [subscription = Nan::Persistent<v8::Object>(localSubscription)]
-            (){ unsubscribe(subscription); });
+            [
+                // Stupid, but no way to lambda caputre a v8::Persistent
+                subscription = std::make_unique<Nan::Persistent<v8::Object>>(localSubscription)
+            ]
+            (){ unsubscribe(*subscription); });
 
         return result;
     }

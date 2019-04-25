@@ -13,7 +13,8 @@ namespace rx::platform::node{
 
         v8::Local<v8::Function> ctor = constructor.Get(Nan::GetCurrentContext()->GetIsolate());
         const int argc = 1;
-        v8::Local<v8::Value> argv[] = { Nan::New<v8::External>(&observable) };
+        v8::Local<v8::Value> argv[] = { Nan::New<v8::External>(
+            &const_cast<rx::observable<v8::Local<v8::Value>>&>(observable)) };
 
         v8::Local<v8::Value> nodeObservable = Nan::CallAsConstructor(
             ctor,
@@ -38,14 +39,15 @@ namespace rx::platform::node{
 
         CppObservableWrap* wrapper = ObjectWrap::Unwrap<CppObservableWrap>(callback.This());
         rx::composite_subscription* subs = new  rx::composite_subscription;
-        
+        v8::Local<v8::Object> arg1 = callback[0].As<v8::Object>();
+
         subs->add(
             wrapper->observable.subscribe(
-                [subscriber = Nan::Persistent<v8::Object>(callback[0].As<v8::Object>())]
+                [/*subscriber = Nan::Persistent<v8::Object>(arg1)*/]
                 (v8::Local<v8::Value> value){
 
-                    v8::Local<v8::Value> localSubscriber = subscriber.Get(
-                        Nan::GetCurrentContext()->GetIsolate());
+                    v8::Local<v8::Object> localSubscriber;/* = subscriber.Get(
+                        Nan::GetCurrentContext()->GetIsolate());*/
                     v8::Local<v8::Function> next;
 
                     if(!v8::quantifio::get(localSubscriber, "next", next)){
@@ -59,7 +61,8 @@ namespace rx::platform::node{
 
         v8::Local<v8::Function> unsubscribe = Nan::New<v8::FunctionTemplate>(
             unSubscribe,
-            Nan::New<v8::External>(subs));
+            Nan::New<v8::External>(subs))
+            ->GetFunction();
 
         callback.GetReturnValue().Set(unsubscribe);
     }
@@ -82,7 +85,7 @@ namespace rx::platform::node{
 
     void CppObservableWrap::init(v8::Local<v8::Object> exports){
         Nan::HandleScope scope;
-        v8::Local<v8::FunctionTemplate> newObjectTemplate = Nan::New<v8::Function>(newObject);
+        v8::Local<v8::FunctionTemplate> newObjectTemplate = Nan::New<v8::FunctionTemplate>(newObject);
         newObjectTemplate->SetClassName(Nan::New("CppObservable").ToLocalChecked());
         newObjectTemplate->InstanceTemplate()->SetInternalFieldCount(1);
 

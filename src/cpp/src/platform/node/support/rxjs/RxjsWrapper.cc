@@ -27,6 +27,8 @@ namespace rx::platform::node{
         const int argc = 1;
         v8::Local<v8::Value> argv[argc] = { subscribe };
 
-        return Nan::CallAsFunction(create, localRxjs, argc, argv).ToLocalChecked();
+        return Nan::CallAsFunction(create, localRxjs, argc, argv)
+            .ToLocalChecked()
+            .As<v8::Object>();
     }
 }

@@ -22,7 +22,7 @@ namespace rx::platform::node{
             });
     }
 
-    rx::composite_subscription NodeObservableWrap::onSubscribe(rx::subscriber<v8::Local<v8::Value>>& susbcriber) const{
+    rx::composite_subscription NodeObservableWrap::onSubscribe(rx::subscriber<v8::Local<v8::Value>>& susbcriber){
         v8::Local<v8::Object> localObservable = observable.Get(Nan::GetCurrentContext()->GetIsolate());
 
         v8::Local<v8::Function> subscribe;

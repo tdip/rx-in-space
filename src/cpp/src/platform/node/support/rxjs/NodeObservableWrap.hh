@@ -13,7 +13,7 @@ namespace rx::platform::node{
     private:
         const Nan::Persistent<v8::Object> observable;
 
-        rx::composite_subscription onSubscribe(rx::subscriber<v8::Local<v8::Value>>&) const;
+        rx::composite_subscription onSubscribe(rx::subscriber<v8::Local<v8::Value>>&);
 
         static void onNext(const Nan::FunctionCallbackInfo<v8::Value>&);
     };
