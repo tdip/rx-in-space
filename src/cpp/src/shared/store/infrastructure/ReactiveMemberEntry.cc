@@ -5,7 +5,7 @@ namespace rx::space::store::infrastructure{
     ReactiveMemberEntry::ReactiveMemberEntry(
         const core::OutputSet& outputSet,
         const types::IReactiveSpaceMemberPtr& activeNode) :
-        context(std::make_shared<ReactiveMemberEntryContext>(
+        context(std::shared_ptr<ReactiveMemberEntryContext>(
             new ReactiveMemberEntryContext{
                 outputSet,
                 activeNode

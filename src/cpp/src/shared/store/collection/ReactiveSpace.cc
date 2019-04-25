@@ -27,7 +27,7 @@ namespace rx::space::store::collection{
             [queryInstance]
             (rx::subscriber<core::ReactiveValueContextPtr> subject){
                 subject.add([queryInstance](){});
-                subject.add(queryInstance->stream.subscribe(subject));
+                subject.add(queryInstance->stream().subscribe(subject));
             });
     }
 

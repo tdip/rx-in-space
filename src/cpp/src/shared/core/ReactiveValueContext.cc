@@ -11,8 +11,8 @@ namespace rx::space::core{
             item != items.end();
             item++){
 
-            values.emplace_back((*item)->value());
-            props.emplace_back((*item)->properties());
+            values.emplace_back(*(*item)->value());
+            props.emplace_back(*(*item)->properties());
         }
 
         ValuePtr value = std::make_shared<Value>(std::move(values));

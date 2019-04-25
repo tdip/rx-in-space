@@ -13,11 +13,15 @@ namespace rx::platform::node{
 
         v8::Local<v8::Function> ctor = constructor.Get(Nan::GetCurrentContext()->GetIsolate());
         const int argc = 1;
+        v8::Local<v8::Value> argv[] = { Nan::New<v8::External>(&observable) };
 
-        Nan::CallAsConstructor(
+        v8::Local<v8::Value> nodeObservable = Nan::CallAsConstructor(
             ctor,
+            argc,
+            argv)
+            .ToLocalChecked();
 
-        )
+        return nodeObservable.As<v8::Object>();
     }
 
     void CppObservableWrap::subscribe(
@@ -81,6 +85,8 @@ namespace rx::platform::node{
         v8::Local<v8::FunctionTemplate> newObjectTemplate = Nan::New<v8::Function>(newObject);
         newObjectTemplate->SetClassName(Nan::New("CppObservable").ToLocalChecked());
         newObjectTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+
+        Nan::SetPrototypeMethod(newObjectTemplate, "subscribe", subscribe);
 
         constructor.Reset(newObjectTemplate->GetFunction());
     }

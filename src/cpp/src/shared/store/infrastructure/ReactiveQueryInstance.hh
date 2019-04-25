@@ -37,7 +37,7 @@ namespace rx::space::store::infrastructure{
 
     public:
         ReactiveQueryInstance(
-            const ReactiveQueryContextBasePtr&,
+            const ReactiveQueryContextBasePtr,
             std::vector<std::reference_wrapper<ReactiveMemberEntry>>&);
 
         ReactiveQueryInstance(
@@ -52,7 +52,7 @@ namespace rx::space::store::infrastructure{
         template<typename ...Args>
         static ReactiveQueryInstancePtr create(Args&& ...args){
             return std::make_shared<ReactiveQueryInstance>(
-                std::forward<Args>(args));
+                std::forward<Args>(args)...);
         }
 
     private:

@@ -7,7 +7,7 @@ namespace rx::space::store::infrastructure{
     ReactiveQueryAggregator::ReactiveQueryAggregator(
         const core::Query& query,
         std::vector<std::reference_wrapper<const types::ReactiveMemberValueStream>>& values) :
-        _stream(util::merge(values)){}
+        _stream(util::merge<core::ReactiveValueContextPtr>(values)){}
 
     ReactiveQueryAggregator::~ReactiveQueryAggregator(){}
 
@@ -15,7 +15,7 @@ namespace rx::space::store::infrastructure{
         return _stream;
     }
 
-    static types::ReactiveMemberValueStream aggregator(
+    types::ReactiveMemberValueStream ReactiveQueryAggregator::aggregator(
         const core::Query& query,
         std::vector<std::reference_wrapper<const types::ReactiveMemberValueStream>>& oss){
 

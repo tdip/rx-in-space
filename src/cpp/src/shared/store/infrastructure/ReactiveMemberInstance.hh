@@ -18,6 +18,8 @@ namespace rx::space::store::infrastructure{
 
     class ReactiveMemberInstance;
 
+    using ReactiveMemberInstancePtr = std::shared_ptr<ReactiveMemberInstance>;
+
     /**
      * Helper class that executes a query on a reactive space member
      * and subscribes to the stream of results. If the query returns
@@ -69,7 +71,7 @@ namespace rx::space::store::infrastructure{
         template<typename ...Args>
         static ReactiveMemberInstancePtr create(Args ...args){
             return std::make_shared<ReactiveMemberInstance>(
-                std::forward<Args>(args));
+                std::forward<Args>(args)...);
         }
 
         const types::ReactiveMemberValueStream& stream() const;
@@ -83,6 +85,4 @@ namespace rx::space::store::infrastructure{
 
         static void onMemberInstanceValue(const ContextWPtr, core::ReactiveValueContextPtr);
     };
-
-    using ReactiveMemberInstancePtr = std::shared_ptr<ReactiveMemberInstance>;
 }

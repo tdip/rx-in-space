@@ -2,7 +2,9 @@
 
 #include "debug.hh"
 
-#include "quantifio/helpers.hh"
+#include "quantifio/v8.hh"
+
+#include "rxjs/CppObservableWrap.hh"
 
 namespace rx::platform::node{
 
@@ -14,11 +16,17 @@ namespace rx::platform::node{
             v8::quantifio::get(localRxjs, "create", create),
             "rxjs is not the javascript implementation of RX");
 
-        v8::Local<v8::Function> subscribe = Nan::New<v8::FunctionTemplate>(
-            subscribeImplementation);
-    }
+        v8::Local<v8::Object> observableWrap = CppObservableWrap::toNodeObservable(
+            observable);
+        v8::Local<v8::Function> subscribe;
 
-    static void subscribeImplementation(const Nan::FunctionCallbackInfo<v8::Value>&){
+        ASSERT_EVAL(
+            v8::quantifio::getBound(observableWrap, "subscribe", subscribe),
+            "Error, CppObservableWrap does not have a subscribe method");
 
+        const int argc = 1;
+        v8::Local<v8::Value> argv[argc] = { subscribe };
+
+        return Nan::CallAsFunction(create, localRxjs, argc, argv).ToLocalChecked();
     }
 }

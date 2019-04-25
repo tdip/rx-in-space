@@ -121,10 +121,10 @@ namespace rx::space::util{
             return rx::empty<T>();
         }
 
-        auto initial = oss[0];
+        auto initial = oss[0].get();
 
         for(size_t i = 1; i < oss.size(); i++){
-            initial = initial | rx::merge(oss[i]);
+            initial = initial | rx::merge(oss[i].get());
         }
 
         return initial;

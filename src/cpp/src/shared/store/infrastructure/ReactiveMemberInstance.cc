@@ -66,8 +66,7 @@ namespace rx::space::store::infrastructure{
         types::IReactiveSpaceMemberPtr member){
 
         context->activeMemberContext = std::make_unique<ActiveMemberContext>(
-            context->queryContext->query,
-            context->queryContext->space,
+            context->queryContext,
             member,
             onActiveMemberValue);
     }

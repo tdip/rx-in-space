@@ -13,6 +13,8 @@ namespace rx::space::core{
         typedef ValueAst<Scalars> RecValue;
 
         public:
+        ValueAst(const ValueAst<Scalars>& other): value(other.value) {} 
+
         explicit ValueAst(std::variant<Scalars, std::vector<RecValue>>&& _value)
             : value(std::move(_value)){}
 

@@ -22,7 +22,7 @@ namespace std{
             std::hash<K> kHash;
             std::hash<V> vHash;
 
-            return kHahs(value.first) ^ (vHash(value.second) << 1);
+            return kHash(value.first) ^ (vHash(value.second) << 1);
         }
     };
 
