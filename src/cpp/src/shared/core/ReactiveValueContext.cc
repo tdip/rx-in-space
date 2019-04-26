@@ -1,6 +1,12 @@
 #include "core/ReactiveValueContext.hh"
 
 namespace rx::space::core{
+
+    ReactiveValueContext::ReactiveValueContext(core::IScalarPtr& scalar) :
+        ReactiveValueContext(
+            std::make_shared<ValueProps>(std::make_shared<IValuePropsEntry>()),
+            createValue(scalar)) {}
+
     ReactiveValueContextPtr merge(std::vector<ReactiveValueContextPtr>& items){
         std::vector<Value> values;
         std::vector<ValueProps> props;

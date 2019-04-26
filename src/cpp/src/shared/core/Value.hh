@@ -15,4 +15,10 @@ namespace rx::space::core{
     using Value = ValueAst<IScalarPtr>;
 
     using ValuePtr = std::shared_ptr<Value>;
+
+    template<typename ...Args>
+    ValuePtr createValue(Args&& ...args){
+        return std::make_shared<Value>(
+            std::forward<Args>(args)...);
+    }
 }

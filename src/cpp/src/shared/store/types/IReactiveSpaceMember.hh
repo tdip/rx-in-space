@@ -37,6 +37,6 @@ namespace rx::space::store::types{
          * return another reactive space that will be subsequently queried using the same
          * query.
          */
-        virtual const MemberValue query(const IReactiveQuerySpace&, const core::Query&) = 0;
+        virtual MemberValue query(const IReactiveQuerySpace&, const core::Query&) = 0;
     };
 }

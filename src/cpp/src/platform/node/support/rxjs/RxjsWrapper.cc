@@ -8,6 +8,9 @@
 
 namespace rx::platform::node{
 
+    RxjsWrapper::RxjsWrapper(v8::Local<v8::Object> _rxjs)
+        : rxjs(_rxjs) {}
+
     v8::Local<v8::Object> RxjsWrapper::create(const rx::observable<v8::Local<v8::Value>> observable) const{
         v8::Local<v8::Object> localRxjs = rxjs.Get(Nan::GetCurrentContext()->GetIsolate());
         v8::Local<v8::Function> create;

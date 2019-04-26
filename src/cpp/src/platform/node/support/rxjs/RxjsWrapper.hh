@@ -6,7 +6,7 @@
 namespace rx::platform::node{
     class RxjsWrapper{
     public:
-        RxjsWrapper(v8::Local<v8::Value>);
+        RxjsWrapper(v8::Local<v8::Object>);
 
         v8::Local<v8::Object> create(const rx::observable<v8::Local<v8::Value>>) const;
     private:
