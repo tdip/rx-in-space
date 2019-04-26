@@ -27,16 +27,14 @@ namespace rx::space::core{
      */
     class ReactiveValueContext{
         public:
-        ReactiveValueContext(ValuePropsPtr __properties, ValuePtr __value):
-            _properties(__properties),
-            _value(__value) {}
+        ReactiveValueContext(ValuePropsPtr __properties, ValuePtr __value);
 
         ReactiveValueContext(core::IScalarPtr&);
 
         template<typename ...Args>
         static ReactiveValueContextPtr create(Args&& ...args){
             return std::make_shared<ReactiveValueContext>(
-                std::forward<Args>...);
+                std::forward<Args>(args)...);
         }
 
         static ReactiveValueContextPtr merge(std::vector<ReactiveValueContextPtr>);

@@ -16,7 +16,7 @@ namespace rx::space::platform::adapters{
         std::optional<core::OutputSet> fromPlatform(v8::Local<v8::Object>);
     }
 
-    namespace ReactiveContext{
+    namespace ReactiveValueContext{
         core::ReactiveValueContextPtr fromPlatform(v8::Local<v8::Value>);
     }
 }

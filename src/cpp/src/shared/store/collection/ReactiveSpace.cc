@@ -2,7 +2,7 @@
 
 namespace rx::space::store::collection{
 
-    const ReactiveMemberValueStream ReactiveSpace::query(const core::Query& query){
+    ReactiveMemberValueStream ReactiveSpace::query(const core::Query& query){
         std::vector<std::reference_wrapper<ReactiveMemberEntry>> entries;
         auto&& activeQueries = context->activeQueries;
         auto&& members = context->members;

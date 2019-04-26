@@ -2,6 +2,10 @@
 
 namespace rx::space::core{
 
+    ReactiveValueContext::ReactiveValueContext(ValuePropsPtr __properties, ValuePtr __value) :
+        _properties(__properties),
+        _value(__value) {}
+
     ReactiveValueContext::ReactiveValueContext(core::IScalarPtr& scalar) :
         ReactiveValueContext(
             std::make_shared<ValueProps>(std::make_shared<IValuePropsEntry>()),

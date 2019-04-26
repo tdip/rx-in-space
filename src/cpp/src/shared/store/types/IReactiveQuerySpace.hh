@@ -11,7 +11,7 @@ namespace rx::space::store::types{
 
     class IReactiveQuerySpace{
         public:
-        virtual const ReactiveMemberValueStream query(const core::Query&) = 0;
+        virtual ReactiveMemberValueStream query(const core::Query&) = 0;
     };
 
     using IReactiveQuerySpacePtr = std::shared_ptr<IReactiveQuerySpace>;

@@ -27,7 +27,7 @@ namespace rx::space::store::collection{
         ReactiveSpace(ContextPtr& _context);
         ReactiveSpace();
 
-        virtual const ReactiveMemberValueStream query(const core::Query&) override;
+        virtual ReactiveMemberValueStream query(const core::Query&) override;
 
         void update(const core::OutputSet&, const types::IReactiveSpaceMemberPtr&);
 

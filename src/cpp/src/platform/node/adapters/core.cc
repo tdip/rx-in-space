@@ -2,6 +2,8 @@
 
 #include "quantifio/v8.hh"
 
+#include "adapters/ValueScalar.hh"
+
 namespace rx::space::platform::adapters{
 
     namespace MemberPropertyValue{
@@ -62,7 +64,10 @@ namespace rx::space::platform::adapters{
         }
     }
 
-    namespace ReactiveContext{
-        core::ReactiveValueContextPtr fromPlatform(v8::Local<v8::Value>);
+    namespace ReactiveValueContext{
+        core::ReactiveValueContextPtr fromPlatform(v8::Local<v8::Value> value){
+            core::IScalarPtr value = ValueScalar::fromPlatform(value);
+            return core::ReactiveValueContext::create(value);
+        }
     }
 }

@@ -7,7 +7,10 @@
 namespace rx::space::platform::adapters{
     class ReactiveSpaceMemberAdapter : public store::types::IReactiveSpaceMember {
     public:
-        ReactiveSpaceMemberAdapter(v8::Local<v8::Object>);
+        ReactiveSpaceMemberAdapter::ReactiveSpaceMemberAdapter(
+            rx::observable<v8::Local<v8::Value>> os);
+
+        static std::optional<store::types::IReactiveSpaceMemberPtr> create(v8::Local<v8::Value>);
 
         virtual store::types::MemberValue query(
             const store::types::IReactiveQuerySpace&,

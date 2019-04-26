@@ -84,10 +84,9 @@ namespace rx::platform::node{
     }
 
     void CppObservableWrap::init(v8::Local<v8::Object> exports){
-        Nan::HandleScope scope;
         v8::Local<v8::FunctionTemplate> newObjectTemplate = Nan::New<v8::FunctionTemplate>(newObject);
         newObjectTemplate->SetClassName(Nan::New("CppObservable").ToLocalChecked());
-        newObjectTemplate->InstanceTemplate()->SetInternalFieldCount(1);
+        newObjectTemplate->InstanceTemplate()->SetInternalFieldCount(0);
 
         Nan::SetPrototypeMethod(newObjectTemplate, "subscribe", subscribe);
 

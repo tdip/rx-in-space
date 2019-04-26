@@ -10,8 +10,20 @@
 
 namespace rx::platform::node{
 
-    const rx::observable<v8::Local<v8::Value>> NodeObservableWrap::toCppObservable(v8::Local<v8::Object> observable){
-        const std::shared_ptr<NodeObservableWrap> wrapper = std::make_shared<NodeObservableWrap>(observable);
+    const std::string K_SUBSCRIBE = "subscribe";
+
+    NodeObservableWrap::NodeObservableWrap(v8::Local<v8::Value> _observable) : observable(_observable) {}
+
+    std::optional<rx::observable<v8::Local<v8::Value>>> NodeObservableWrap::toCppObservable(
+        v8::Local<v8::Value> observable){
+
+        v8::Local<v8::Function> subscribe;
+        if(!v8::quantifio::get(observable, K_SUBSCRIBE, subscribe)){
+            return std::nullopt;
+        }
+
+        const std::shared_ptr<NodeObservableWrap> wrapper = std::make_shared<NodeObservableWrap>(
+            observable);
 
         return  rx::create<v8::Local<v8::Value>>(
             [wrapper]
@@ -23,11 +35,11 @@ namespace rx::platform::node{
     }
 
     rx::composite_subscription NodeObservableWrap::onSubscribe(rx::subscriber<v8::Local<v8::Value>>& susbcriber){
-        v8::Local<v8::Object> localObservable = observable.Get(Nan::GetCurrentContext()->GetIsolate());
+        v8::Local<v8::Value> localObservable = observable.Get(Nan::GetCurrentContext()->GetIsolate());
 
         v8::Local<v8::Function> subscribe;
         ASSERT_EVAL(
-            v8::quantifio::get(localObservable, "subscribe", subscribe),
+            v8::quantifio::get(localObservable, K_SUBSCRIBE, subscribe),
             "Provided object is not an observable.");
 
         v8::Local<v8::External> data = Nan::New<v8::External>(this);
@@ -42,7 +54,7 @@ namespace rx::platform::node{
 
         v8::Local<v8::Object> subscription = Nan::CallAsFunction(
             subscribe,
-            localObservable,
+            localObservable.As<v8::Object>(),
             argc,
             argv)
             .ToLocalChecked()
