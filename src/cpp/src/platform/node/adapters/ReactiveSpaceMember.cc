@@ -16,7 +16,8 @@ namespace rx::space::platform::adapters{
         const store::types::IReactiveQuerySpace&,
         const core::Query&){
 
-        return store::types::ReactiveMemberValueStream(observable);
+        store::types::ReactiveMemberValueStream res = store::types::ReactiveMemberValueStream(observable);
+        return std::move(res);
     }
 
     static std::optional<store::types::IReactiveSpaceMemberPtr> create(
@@ -26,7 +27,7 @@ namespace rx::space::platform::adapters{
 
         if(os.has_value()){
             return std::make_shared<ReactiveSpaceMemberAdapter>(
-                os.value);
+                os.value());
         }
 
         return std::nullopt;

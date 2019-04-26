@@ -17,8 +17,8 @@ namespace rx::space::platform::node{
 
         if(
             info.Length() < 2
-            || !(outputSet = adapters::OutputSet::fromPlatform(info[0]).has_value)
-            || !(member = adapters::ReactiveSpaceMemberAdapter::create(info[1]).has_value)){
+            || !(outputSet = adapters::OutputSet::fromPlatform(info[0])).has_value()
+            || !(member = adapters::ReactiveSpaceMemberAdapter::create(info[1])).has_value()){
 
             Nan::ThrowError(
                 "The 'update' method of 'NodeReactiveSpace' requires two argumnts.");
@@ -26,7 +26,7 @@ namespace rx::space::platform::node{
         }
 
         NodeReactiveSpace* space = ObjectWrap::Unwrap<NodeReactiveSpace>(info.This());
-        space->reactiveSpace->update(outputSet.value, member.value);
+        space->reactiveSpace->update(outputSet.value(), member.value());
         info.GetReturnValue().SetUndefined();
     }
 

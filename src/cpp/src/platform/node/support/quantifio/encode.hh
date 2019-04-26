@@ -8,6 +8,6 @@
 namespace v8::quantifio{
 
     namespace String{
-        std::optional<std::string> fromPlatform(v8::Local<v8::String>);
+        std::optional<std::string> fromPlatform(v8::Local<v8::Value>);
     }
 }

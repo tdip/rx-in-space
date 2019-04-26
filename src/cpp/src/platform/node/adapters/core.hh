@@ -13,7 +13,7 @@ namespace rx::space::platform::adapters{
     }
 
     namespace OutputSet{
-        std::optional<core::OutputSet> fromPlatform(v8::Local<v8::Object>);
+        std::optional<core::OutputSet> fromPlatform(v8::Local<v8::Value>);
     }
 
     namespace ReactiveValueContext{

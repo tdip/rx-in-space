@@ -41,8 +41,8 @@ namespace rx::space::platform::adapters{
                 result.emplace(
                     std::piecewise_construct,
                     std::forward_as_tuple(
-                        v8::quantifio::String::fromPlatform(vKey.As<v8::String>()).value),
-                    std::forward_as_tuple(property.value));
+                        v8::quantifio::String::fromPlatform(vKey.As<v8::String>()).value()),
+                    std::forward_as_tuple(property.value()));
             }
 
             return result;
@@ -52,10 +52,10 @@ namespace rx::space::platform::adapters{
     namespace OutputSet{
         std::optional<core::OutputSet> fromPlatform(v8::Local<v8::Value> value){
 
-            auto members = fromPlatform(v8::quantifio::get(value, "properties"));
+            auto members = MemberProperties::fromPlatform(v8::quantifio::get(value, "properties"));
             if(members.has_value()){
                 return core::OutputSet{
-                    std::move(members.value),
+                    std::move(members.value()),
                     std::vector<core::OutputSetSelector>{ core::BaseSelector::All }
                 };
             }
@@ -66,8 +66,8 @@ namespace rx::space::platform::adapters{
 
     namespace ReactiveValueContext{
         core::ReactiveValueContextPtr fromPlatform(v8::Local<v8::Value> value){
-            core::IScalarPtr value = ValueScalar::fromPlatform(value);
-            return core::ReactiveValueContext::create(value);
+            core::IScalarPtr scalar = ValueScalar::fromPlatform(value);
+            return core::ReactiveValueContext::create(scalar);
         }
     }
 }

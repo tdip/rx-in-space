@@ -13,4 +13,4 @@ namespace rx::space::platform::node{
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-function-type"
 NODE_MODULE(RxInSpace, rx::space::platform::node::init);
-#pragma GCC diagnostic pop
+#pragma GCC diagnostic popl

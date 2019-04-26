@@ -1,6 +1,6 @@
 #ifdef _DEBUG
 
-#incldue <assert.h>
+#include <assert.h>
 
 #define ASSERT_EVAL(COND, MSG) if(!COND){printf("%s\n", MSG); assert(COND);}
 

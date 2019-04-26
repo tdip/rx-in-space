@@ -7,7 +7,7 @@
 namespace rx::space::platform::adapters{
     class ReactiveSpaceMemberAdapter : public store::types::IReactiveSpaceMember {
     public:
-        ReactiveSpaceMemberAdapter::ReactiveSpaceMemberAdapter(
+        ReactiveSpaceMemberAdapter(
             rx::observable<v8::Local<v8::Value>> os);
 
         static std::optional<store::types::IReactiveSpaceMemberPtr> create(v8::Local<v8::Value>);

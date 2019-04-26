@@ -35,7 +35,6 @@
         },
         {
             "target_name":"rx_in_space",
-            "type":"<(library)",
             "sources":[
                 '<!@(find src/cpp/src/platform/ -name "*.cc")',
             ],
@@ -44,6 +43,7 @@
                 "<!(node -e \"require('nan')\")",
                 "src/cpp/src/shared",
                 "src/cpp/src/include",
+                "src/cpp/src/platform/node/",
                 "src/cpp/src/platform/node/support",
                 "src/cpp/modules/RxCpp/Rx/v2/src",
             ],
