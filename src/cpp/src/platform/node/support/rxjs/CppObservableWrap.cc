@@ -4,6 +4,8 @@
 
 namespace rx::platform::node{
 
+    Nan::Persistent<v8::Function> CppObservableWrap::constructor;
+
     CppObservableWrap::CppObservableWrap(
         const rx::observable<v8::Local<v8::Value>>& _observable) :
         observable(_observable){}
@@ -43,15 +45,16 @@ namespace rx::platform::node{
 
         subs->add(
             wrapper->observable.subscribe(
-                [/*subscriber = Nan::Persistent<v8::Object>(arg1)*/]
+                [subscriber = std::make_shared<Nan::Persistent<v8::Object>>(arg1)]
                 (v8::Local<v8::Value> value){
 
-                    v8::Local<v8::Object> localSubscriber;/* = subscriber.Get(
-                        Nan::GetCurrentContext()->GetIsolate());*/
+                    v8::Local<v8::Object> localSubscriber = subscriber->Get(
+                        Nan::GetCurrentContext()->GetIsolate());
                     v8::Local<v8::Function> next;
 
                     if(!v8::quantifio::get(localSubscriber, "next", next)){
                         Nan::ThrowError("Subscribe requires a subscriber as argument");
+                        return;
                     }
 
                     const int argc = 1;

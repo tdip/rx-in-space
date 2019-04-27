@@ -1,6 +1,7 @@
-const path = require('path');
+const gulp = require('gulp');
 const ts = require('gulp-typescript');
 const sourcemap = require('gulp-sourcemaps');
+const path = require('path');
 const tsProject = ts.createProject('tsconfig.json');
 
 const buildFolder = path.resolve('build');

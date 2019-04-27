@@ -5,6 +5,11 @@
 
 namespace rx::platform::node{
 
+    struct SubscriptionContext{
+        rx::composite_subscription subscription;
+        rx::subscriber<v8::Local<v8::Value>> subscriber;
+    };
+
     /**
      * Class that allows using an observable created
      * with the rxjs javascript library as a standard
@@ -22,7 +27,7 @@ namespace rx::platform::node{
     private:
         const Nan::Persistent<v8::Value> observable;
 
-        rx::composite_subscription onSubscribe(rx::subscriber<v8::Local<v8::Value>>&);
+        void onSubscribe(SubscriptionContext&) const;
 
         static void onNext(const Nan::FunctionCallbackInfo<v8::Value>&);
     };

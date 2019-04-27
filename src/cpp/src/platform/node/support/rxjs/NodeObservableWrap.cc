@@ -14,6 +14,11 @@ namespace rx::platform::node{
 
     NodeObservableWrap::NodeObservableWrap(v8::Local<v8::Value> _observable) : observable(_observable) {}
 
+    void NodeObservableWrap::onNext(const Nan::FunctionCallbackInfo<v8::Value>& value){
+        SubscriptionContext* wrapper = (SubscriptionContext*)value.Data().As<v8::External>()->Value();
+        wrapper->subscriber.on_next(value[0]);
+    }
+
     std::optional<rx::observable<v8::Local<v8::Value>>> NodeObservableWrap::toCppObservable(
         v8::Local<v8::Value> observable){
 
@@ -28,13 +33,20 @@ namespace rx::platform::node{
         return  rx::create<v8::Local<v8::Value>>(
             [wrapper]
             (rx::subscriber<v8::Local<v8::Value>> subscriber){
-                subscriber.add([wrapper, subscription = wrapper->onSubscribe(subscriber)](){
-                    subscription.unsubscribe();
+                std::unique_ptr<SubscriptionContext> context = std::unique_ptr<SubscriptionContext>(
+                    new SubscriptionContext{
+                        rx::composite_subscription(),
+                        std::move(subscriber)
+                    });
+                wrapper->onSubscribe(*context);
+
+                subscriber.add([subscription = std::move(context)](){
+                    subscription->subscription.unsubscribe();
                 });
             });
     }
 
-    rx::composite_subscription NodeObservableWrap::onSubscribe(rx::subscriber<v8::Local<v8::Value>>& susbcriber){
+    void NodeObservableWrap::onSubscribe(SubscriptionContext& subscriber) const{
         v8::Local<v8::Value> localObservable = observable.Get(Nan::GetCurrentContext()->GetIsolate());
 
         v8::Local<v8::Function> subscribe;
@@ -42,7 +54,7 @@ namespace rx::platform::node{
             v8::quantifio::get(localObservable, K_SUBSCRIBE, subscribe),
             "Provided object is not an observable.");
 
-        v8::Local<v8::External> data = Nan::New<v8::External>(this);
+        v8::Local<v8::External> data = Nan::New<v8::External>(&subscriber);
 
         v8::Local<v8::Function> onValue = Nan::New<v8::FunctionTemplate>(
             onNext,
@@ -60,9 +72,6 @@ namespace rx::platform::node{
             .ToLocalChecked()
             .As<v8::Object>();
 
-        rx::composite_subscription result;
-        result.add(NodeSubscription::toCppSubscription(subscription));
-
-        return result;
+        subscriber.subscription.add(NodeSubscription::toCppSubscription(subscription));
     }
 }

@@ -5,6 +5,8 @@
 
 namespace rx::space::platform::node{
 
+    Nan::Persistent<v8::Function> NodeReactiveSpace::constructor;
+
     NodeReactiveSpace::NodeReactiveSpace() :
         reactiveSpace(std::make_unique<ReactiveSpace>()) {}
 

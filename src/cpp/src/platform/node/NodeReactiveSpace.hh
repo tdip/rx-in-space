@@ -20,8 +20,8 @@ namespace rx::space::platform::node{
 
         static void init(v8::Local<v8::Object>);
     private:
-        const std::unique_ptr<ReactiveSpace> reactiveSpace;
         static Nan::Persistent<v8::Function> constructor;
+        const std::unique_ptr<ReactiveSpace> reactiveSpace;
 
         static void newObject(const Nan::FunctionCallbackInfo<v8::Value>&);
     };

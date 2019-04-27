@@ -3,10 +3,10 @@ import * as rxjs from "rxjs"
 
 import { OutputSet } from "./core"
 
-const LD_LIBRARY_PATH = 'LD_LIBRARY_PATH';
+const LD_LIBRARY_PATH = 'NODE_PATH';
 
 function RX_IN_SPACE_LIB_PATH(){
-    return path.join(__dirname, '..', '..', 'lib');
+    return path.join(__dirname, '..', 'lib');
 }
 
 export type ManagedReactiveSpaceMember = rxjs.Observable<any>; 
@@ -26,7 +26,9 @@ function loadRxInSpace(): RxInSpace{
         process.env[LD_LIBRARY_PATH] = RX_IN_SPACE_LIB_PATH();
     }
 
-    return require('../../../lib/rx_in_space.node');
+    console.log(process.env[LD_LIBRARY_PATH]);
+
+    return require('../lib/rx_in_space.node');
 }
 
 export const RxInSpace = loadRxInSpace();

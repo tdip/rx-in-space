@@ -19,5 +19,12 @@
   "dependencies": {
     "nan": "^2.13.2",
     "rxjs": "^6.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^11.13.8",
+    "gulp": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.5",
+    "gulp-typescript": "^5.0.1",
+    "typescript": "^3.4.5"
   }
 }
