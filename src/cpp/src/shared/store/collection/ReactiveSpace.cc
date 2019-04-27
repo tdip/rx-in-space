@@ -2,6 +2,20 @@
 
 namespace rx::space::store::collection{
 
+    ReactiveSpace::ReactiveSpace() :
+        context(std::shared_ptr<ReactiveSpaceContext>(
+            new ReactiveSpaceContext{
+                std::unordered_map<Key, ReactiveMemberEntry>(),
+                std::vector<std::weak_ptr<ReactiveQueryInstance>>()
+            })) {}
+
+    ReactiveSpace::ReactiveSpace(
+        const ContextPtr& _context) : context(_context){}
+
+    IReactiveQuerySpacePtr ReactiveSpace::getQuerySubspace(const core::Query&) const{
+        return std::make_shared<ReactiveSpace>(context);
+    }
+
     ReactiveMemberValueStream ReactiveSpace::query(const core::Query& query){
         std::vector<std::reference_wrapper<ReactiveMemberEntry>> entries;
         auto&& activeQueries = context->activeQueries;

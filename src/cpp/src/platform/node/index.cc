@@ -7,6 +7,7 @@
 namespace rx::space::platform::node{
     void init(v8::Local<v8::Object> exports){
         rx::platform::node::CppObservableWrap::init(exports);
+        NodeReactiveSpace::init(exports);
     }
 }
 

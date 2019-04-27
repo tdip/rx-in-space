@@ -24,7 +24,7 @@ namespace rx::space::store::collection{
     typedef std::shared_ptr<ReactiveSpaceContext> ContextPtr;
 
     public:
-        ReactiveSpace(ContextPtr& _context);
+        ReactiveSpace(const ContextPtr& _context);
         ReactiveSpace();
 
         virtual ReactiveMemberValueStream query(const core::Query&) override;
