@@ -12,4 +12,11 @@ namespace rx::space::core::foundations::protected_set{
             acl::nextScope(set.permissions)
         };
     }
+
+    ProtectedSetIdentifier dropACLs(const ProtectedSetIdentifier& acls){
+        return {
+            acls.setId,
+            std::unordered_map<size_t, Permission>()  
+        };
+    }
 }

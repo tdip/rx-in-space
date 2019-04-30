@@ -26,33 +26,65 @@ namespace rx::space::structures{
         return _reactiveMember;
     }
 
-    std::optional<Update> ReactiveMember::update(const Update& update){
-        const foundations::ProtectedSetIdentifier& set = std::get<0>(update);
-        const Operation& op = std::get<1>(update);
-        std::optional<Update> result = std::nullopt;
+    ReactiveUpdates ReactiveMember::update(const ReactiveUpdates& updates){
 
-        // If the scope of the set is the 'ground scope', this
-        // member will be directly replaced.
-        if(foundations::protected_set::inGroundScope(set)){
-            if(std::holds_alternative<SetReactiveSpace>(op)){
-                _reactiveMember = std::get<SetReactiveSpace>(op).space;
-            }else if(std::holds_alternative<DeleteValue>(op)){
-                _reactiveMember = rx::empty<core::ReactiveValueContextPtr>();
+        ReactiveUpdates nextUpdates;
+        std::optional<Update> groundUpdate;
+
+        // First apply updates to the ground scope if necessary
+        for(
+            auto&& update = updates.begin();
+            update != updates.end();
+            update++){
+
+            const foundations::ProtectedSetIdentifier& set = std::get<0>(*update);
+            const Operation& op = std::get<1>(*update);
+
+            // If the scope of the set is the 'ground scope', this
+            // member will be directly replaced.
+            if(foundations::protected_set::inGroundScope(set)){
+                updateGroundState(*update);
+                groundUpdate = *update;
+            }else{
+                nextUpdates.emplace_back(*update);
             }
+        }
 
-            result = update;
-        }else{
+        /**
+         * Forward updates to child nodes if necessary
+         */
+        if(nextUpdates.size() > 0){
             IReactiveSpacePtr member = tryGetSpace(_reactiveMember);
 
             if(!member){
                 member = ReactiveSpace::create();
-                result = update;
+                _protectedSet = foundations::protected_set::dropACLs(_protectedSet);
+                groundUpdate = {
+                    _protectedSet,
+                    core::SetReactiveSpace{ member }
+                };
             }
 
-            const ReactiveUpdates nextUpdates = { reactive_update::nextScope(update) };
             member->update(nextUpdates);
         }
 
-        return std::move(result);
+        if(groundUpdate.has_value()){
+            return { groundUpdate.value() };
+        }else{
+            return {};
+        }
+    }
+
+    void ReactiveMember::updateGroundState(const Update& update){
+
+        const foundations::ProtectedSetIdentifier& set = std::get<0>(update);
+        const Operation& op = std::get<1>(update);
+        _protectedSet = set;
+
+        if(std::holds_alternative<SetReactiveSpace>(op)){
+            _reactiveMember = std::get<SetReactiveSpace>(op).space;
+        }else if(std::holds_alternative<DeleteValue>(op)){
+            _reactiveMember = rx::empty<core::ReactiveValueContextPtr>();
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace rx::space::core{
 
     using OutputSetSelector = std::variant<BaseSelector, std::vector<std::string>>;
 
-    /**
+    /**exp[or
      * Describes the set on which values of the reactive space
      * will be located. Additionally it specifies the
      * conditions under which the items of said set are

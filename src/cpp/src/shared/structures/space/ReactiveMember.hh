@@ -19,10 +19,12 @@ namespace rx::space::structures{
         ReactiveMember(const foundations::ProtectedSetIdentifier&, ReactiveMemberValue&);
         const foundations::ProtectedSetIdentifier& protectedSet() const;
         const ReactiveMemberValue& reactiveMember() const;
-        std::optional<Update> update(const Update&);
+        ReactiveUpdates update(const ReactiveUpdates&);
 
     private:
         foundations::ProtectedSetIdentifier _protectedSet;
         ReactiveMemberValue& _reactiveMember;
+
+        void updateGroundState(const Update&);
     };
 }
