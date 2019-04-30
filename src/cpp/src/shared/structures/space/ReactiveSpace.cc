@@ -21,5 +21,15 @@ namespace rx::space::structures{
 
     std::optional<exceptions::UpdateException> ReactiveSpace::update(const ReactiveUpdates& deltas){
 
+        std::unordered_map<int64_t, ReactiveUpdates> updates;
+
+        for(
+            auto&& delta = deltas.begin();
+            delta != deltas.end();
+            delta++){
+
+            const int64_t index = reactive_update::getScopedIndex(*delta);
+            updates[index].emplace_back(*delta);
+        }
     }
 }

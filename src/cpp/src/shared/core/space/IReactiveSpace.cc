@@ -3,9 +3,15 @@
 #include "core/foundations/ProtectedSetIdentifier.hh"
 
 namespace rx::space::core::reactive_update{
+
+    int64_t getScopedIndex(const Update& update){
+        return foundations::protected_set::getScopedIndex(update.setId);
+    }
+
     Update nextScope(const Update& update){
-        return std::make_tuple(
-            foundations::protected_set::nextScope(std::get<0>(update)),
-            std::get<1>(update));
+        return {
+            foundations::protected_set::nextScope(update.setId),
+            update.operation
+        };
     }
 }

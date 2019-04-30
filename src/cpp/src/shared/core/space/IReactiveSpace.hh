@@ -19,11 +19,15 @@ namespace rx::space::core{
 
     typedef std::variant<SetReactiveSpace, DeleteValue> Operation;
 
-    typedef std::tuple<foundations::ProtectedSetIdentifier, Operation> Update;
+    struct Update{
+        const foundations::ProtectedSetIdentifier setId;
+        const Operation operation;
+    };
 
     typedef std::vector<Update> ReactiveUpdates;
 
     namespace reactive_update{
+        int64_t getScopedIndex(const Update&);
         Update nextScope(const Update&);
     }
 
