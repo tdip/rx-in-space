@@ -4,21 +4,23 @@
 
 namespace rx::space::structures{
 
-    IReactiveSpacePtr tryGetSpace(const ReactiveMemberValue& value){
+    using namespace core;
+
+    const IReactiveSpacePtr tryGetSpace(const ReactiveMemberValue& value){
         if(!std::holds_alternative<IReactiveQuerySpacePtr>(value)){
             return nullptr;
         }
 
-        return std::dynamic_pointer_cast<IReactiveSpace>(std::get<IReactiveQuerySpacePtr>(value));
+        const IReactiveQuerySpacePtr& ptr = std::get<IReactiveQuerySpacePtr>(value);
+        return std::dynamic_pointer_cast<IReactiveSpace>(ptr);
     }
 
     ReactiveMember::ReactiveMember(
-        const foundations::ProtectedSetIdentifier& __protectedSet,
-        ReactiveMemberValue& __reactiveMember) :
+        const ProtectedSetIdentifier& __protectedSet) :
         _protectedSet(__protectedSet),
-        _reactiveMember(__reactiveMember){}
+        _reactiveMember(rx::empty<ReactiveValueContextPtr>()){}
 
-    const foundations::ProtectedSetIdentifier& ReactiveMember::protectedSet() const{
+    const ProtectedSetIdentifier& ReactiveMember::protectedSet() const{
         return _protectedSet;
     }
 
@@ -26,7 +28,9 @@ namespace rx::space::structures{
         return _reactiveMember;
     }
 
-    ReactiveUpdates ReactiveMember::update(const ReactiveUpdates& updates){
+    void ReactiveMember::update(
+        const ReactiveUpdates& updates,
+        ReactiveUpdates& notifyUpdates){
 
         ReactiveUpdates nextUpdates;
         std::optional<Update> groundUpdate;
@@ -37,14 +41,14 @@ namespace rx::space::structures{
             update != updates.end();
             update++){
 
-            const foundations::ProtectedSetIdentifier& set = std::get<0>(*update);
-            const Operation& op = std::get<1>(*update);
+            const ProtectedSetIdentifier& set = update->setId;
+            const Operation& op = update->operation;
 
             // If the scope of the set is the 'ground scope', this
             // member will be directly replaced.
-            if(foundations::protected_set::inGroundScope(set)){
+            if(protected_set::inGroundScope(set)){
                 updateGroundState(*update);
-                groundUpdate = *update;
+                groundUpdate.emplace(*update);
             }else{
                 nextUpdates.emplace_back(*update);
             }
@@ -58,27 +62,26 @@ namespace rx::space::structures{
 
             if(!member){
                 member = ReactiveSpace::create();
-                _protectedSet = foundations::protected_set::dropACLs(_protectedSet);
-                groundUpdate = {
+                _protectedSet = protected_set::dropACLs(_protectedSet);
+                groundUpdate.emplace(Update{
                     _protectedSet,
-                    core::SetReactiveSpace{ member }
-                };
+                    SetReactiveSpace{ member }
+                });
             }
 
             member->update(nextUpdates);
         }
 
         if(groundUpdate.has_value()){
-            return { groundUpdate.value() };
-        }else{
-            return {};
+            notifyUpdates.emplace_back(
+                groundUpdate.value());
         }
     }
 
     void ReactiveMember::updateGroundState(const Update& update){
 
-        const foundations::ProtectedSetIdentifier& set = std::get<0>(update);
-        const Operation& op = std::get<1>(update);
+        const ProtectedSetIdentifier& set = update.setId;
+        const Operation& op = update.operation;
         _protectedSet = set;
 
         if(std::holds_alternative<SetReactiveSpace>(op)){

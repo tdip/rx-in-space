@@ -17,16 +17,16 @@ namespace rx::space::structures{
 
     using ReactiveUpdateSubject = util::SimpleSubject<std::reference_wrapper<ReactiveUpdates>>;
 
+    using DeltaObservable = rx::observable<std::reference_wrapper<ReactiveUpdates>>;
+
     struct ReactiveSpaceContext{
         ReactiveSpaceCollection spaces;
-        ReactiveUpdates updates;
+        ReactiveUpdateSubject updates;
     };
 
     using MemberDelta = std::optional<IReactiveQuerySpacePtr>;
 
     using SpaceDelta = std::unordered_map<int64_t, MemberDelta>;
-
-    using DeltaObservable = rx::observable<std::reference_wrapper<ReactiveUpdates>>;
 
     /**
      * Standard reactive spaces that uses a dictionary
@@ -49,11 +49,12 @@ namespace rx::space::structures{
     private:
         typedef std::shared_ptr<ReactiveSpaceContext> ContextPtr;
 
-        const std::optional<core::SetIdentifier> scope;
+        const std::optional<core::PowerSetIdentifier> scope;
         const ContextPtr context;
 
         ReactiveSpace(const core::SetIdentifier&, const ContextPtr&);
 
         DeltaObservable deltas(const core::PowerSetIdentifier&) const;
+        void notify(const ReactiveUpdates&) const;
     };
 }

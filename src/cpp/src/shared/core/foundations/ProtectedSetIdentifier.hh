@@ -3,7 +3,7 @@
 #include "core/foundations/ACL.hh"
 #include "core/foundations/Identifiers.hh"
 
-namespace rx::space::core::foundations{
+namespace rx::space::core{
 
     /**
      * Identifier of a set of reactive
@@ -16,6 +16,7 @@ namespace rx::space::core::foundations{
     };
 
     namespace protected_set{
+        ProtectedSetIdentifier create(const int64_t);
         ProtectedSetIdentifier dropACLs(const ProtectedSetIdentifier&);
         int64_t getScopedIndex(const ProtectedSetIdentifier&);
         bool inGroundScope(const ProtectedSetIdentifier&);

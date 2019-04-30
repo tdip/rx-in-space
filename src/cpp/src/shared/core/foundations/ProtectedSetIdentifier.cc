@@ -1,6 +1,13 @@
 #include "core/foundations/ProtectedSetIdentifier.hh"
 
-namespace rx::space::core::foundations::protected_set{
+namespace rx::space::core::protected_set{
+
+    ProtectedSetIdentifier create(const int64_t address){
+        return ProtectedSetIdentifier{
+            std::vector<int64_t>{ address },
+            std::unordered_map<size_t, Permission>()
+        };
+    }
 
     ProtectedSetIdentifier dropACLs(const ProtectedSetIdentifier& acls){
         return {

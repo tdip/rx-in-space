@@ -17,15 +17,20 @@ namespace rx::space::core{
 
             return result;
         }
+
+        SetIdentifier intersect(const SetIdentifier& s1, const SetIdentifier& s2){
+
+        }
     }
 
     namespace power_set_identifier{
         bool inScope(const int64_t scope, const PowerSetIdentifier& id){
+            return id.members.find(scope) != id.members.end();
+        }
 
-            if(std::holds_alternative<SetIdentifier>(id)){
-                const SetIdentifier& set = std::get<SetIdentifier>(id);
-                return set.size() > 0 && set[0] == scope; 
-            }
+        PowerSetIdentifier intersect(
+            const PowerSetIdentifier& s1,
+            const PowerSetIdentifier& s2){
         }
     }
 }
