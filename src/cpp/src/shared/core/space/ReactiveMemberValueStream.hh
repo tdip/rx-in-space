@@ -2,11 +2,11 @@
 
 #include "rx.hh"
 
-#include "core/ReactiveValueContext.hh"
+#include "core/foundations/ReactiveValueContext.hh"
 
 #include "util/SimpleSubject.hh"
 
-namespace rx::space::store::types{
+namespace rx::space::core{
 
     using ReactiveMemberValueStream = rx::observable<core::ReactiveValueContextPtr>;
 
