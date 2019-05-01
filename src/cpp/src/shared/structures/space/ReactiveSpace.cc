@@ -20,9 +20,18 @@ namespace rx::space::structures{
 
     ReactiveMemberValueStream ReactiveSpace::query(const core::PowerSetIdentifier& setId){
 
-        ReactiveSpaceCollection& members = context->spaces;
+        ReactiveSpaceCollection& spaces = context->spaces;
 
-        for(auto&& member = )
+        for(
+            auto&& member = spaces.begin();
+            member != spaces.end();
+            member++){
+
+            if(
+                (!scope.has_value() || protected_set::isMember(scope.value(), setId))
+                && 
+            )
+        }
     }
 
     std::optional<exceptions::UpdateException> ReactiveSpace::update(const ReactiveUpdates& deltas){
