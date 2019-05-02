@@ -2,7 +2,7 @@
 
 #include <unordered_map>
 
-#include "core/foundations/Identifiers.hh"
+#include "core/foundations/Key.hh"
 
 #include "core/space/IReactiveSpace.hh"
 
@@ -35,7 +35,6 @@ namespace rx::space::structures{
     class ReactiveSpace : IReactiveSpace{
     public:
         ReactiveSpace();
-        ReactiveSpace(ReactiveSpaceCollection&& initialMembers);
 
         virtual ReactiveMemberValueStream query(const core::PowerSetIdentifier&) override;
         virtual IReactiveQuerySpacePtr link(const core::PowerSetIdentifier&) override;

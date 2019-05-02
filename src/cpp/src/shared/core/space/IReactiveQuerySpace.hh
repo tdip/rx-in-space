@@ -3,7 +3,7 @@
 #include <memory>
 #include <variant>
 
-#include "core/foundations/Identifiers.hh"
+#include "core/foundations/Key.hh"
 
 #include "core/space/ReactiveMemberValueStream.hh"
 
@@ -26,13 +26,13 @@ namespace rx::space::core{
          * Get an observable to all the values of the set matching
          * the given identifier.
          */
-        virtual ReactiveMemberValueStream query(const core::PowerSetIdentifier&) = 0;
+        virtual ReactiveMemberValueStream query(const KeySet&) = 0;
 
         /**
          * Split the reactive space into a subspace containing only
          * the members corresponding to the given set.
          */
-        virtual IReactiveQuerySpacePtr link(const core::PowerSetIdentifier&) = 0;
+        //virtual IReactiveQuerySpacePtr link(const core::PowerSetIdentifier&) = 0;
 
         virtual ~IReactiveQuerySpace() = default;
     };

@@ -36,6 +36,23 @@ namespace rx::space::util{
         const rx::observable<T>& observable() const { return source; }
 
         void onNext(T value) const{
+            onNextContext(context, value);
+        }
+
+        rx::composite_subscription subscribeTo(const rx::observable<T>& os) const{
+            return os.subscribe(
+                [context = this.context]
+                (T value){
+                    onNextContext(context, value);
+                });
+        }
+
+        private:
+        const ContextPtr context;
+        const ContextWPtr wContext;
+        const rx::observable<T> source;
+
+        static void onNextContext(ContextPtr& context, T value) const{
             for(
                 auto&& subscriber = context->subscribers.begin();
                 subscriber != context->subscribers.end();
@@ -44,11 +61,6 @@ namespace rx::space::util{
                 subscriber->second.on_next(value);
             }
         }
-
-        private:
-        const ContextPtr context;
-        const ContextWPtr wContext;
-        const rx::observable<T> source;
 
         static void onSubscribe(ContextWPtr wContext, rx::subscriber<T>& subscriber){
             ContextPtr context = wContext.lock();

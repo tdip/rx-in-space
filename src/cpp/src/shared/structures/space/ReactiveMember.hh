@@ -2,13 +2,13 @@
 
 #include <optional>
 
-#include "core/foundations/Identifiers.hh"
-#include "core/foundations/ProtectedSetIdentifier.hh"
 #include "core/space/IReactiveSpace.hh"
+
+#include "util/SimpleSubject.hh"
 
 namespace rx::space::structures{
 
-    using ReactiveMemberValue = std::variant<core::ReactiveMemberValueStream, core::IReactiveQuerySpacePtr>;
+    typedef util::SimpleSubject<core::ReactiveValueContextPtr> ReactiveMemberSubject;
 
     /**
      * Helper class that serves as a storage cell for reactive
@@ -16,15 +16,13 @@ namespace rx::space::structures{
      */
     class ReactiveMember{
     public:
-        ReactiveMember(const core::ProtectedSetIdentifier&);
-        const core::ProtectedSetIdentifier& protectedSet() const;
-        const ReactiveMemberValue& reactiveMember() const;
-        void update(const ReactiveUpdates&, ReactiveUpdates&);
+        ReactiveMember();
+        ReactiveMember(const core::ReactiveMemberValueStream&);
+        const core::ReactiveMemberValueStream& reactiveMember() const;
+        void update(const core::ReactiveMemberValueStream&);
 
     private:
-        core::ProtectedSetIdentifier _protectedSet;
-        ReactiveMemberValue _reactiveMember;
-
-        void updateGroundState(const Update&);
+        const ReactiveMemberSubject _reactiveMember;
+        rx::composite_subscription _reactiveMemberSubscription;
     };
 }
