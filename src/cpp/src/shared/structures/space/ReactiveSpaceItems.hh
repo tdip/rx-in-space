@@ -3,6 +3,6 @@
 namespace rx::space::structures{
 
     class ReactiveSpaceItems : public types::IReactiveSpaceMutableItems{
-
+        
     };
 }

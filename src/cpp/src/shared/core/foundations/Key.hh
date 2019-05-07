@@ -13,49 +13,25 @@ namespace rx::space::core{
      * key is in that set will be combined into a
      * single stream.
      */
-    typedef int64_t Key;
+    typedef int64_t KeySet;
 
     /**
-     * Represetns a set of keys corresponding to
-     * the set of reactive streams desired.
+     * Type that represents members of the power set of
+     * keys. This allows efficient and precise querying
+     * of sets of reactive elements.
      */
-    struct KeySet{
-        KeySet(const KeySet&);
-        KeySet& operator=(const KeySet& other);
-        KeySet& operator=(const KeySet&& other) noexcept;        
-    };
+    struct KeyPowerSet{
+        const KeySet module;
 
-    typedef std::pair<GroupKeySet, GroupKeySet> Union;
-    typedef std::pair<GroupKeySet, GroupKeySet> Intersection;
+        KeyPowerSet(const KeyPowerSet& other) = default;
 
-    struct GroupKeySet{
-        const Key module;
-
-        GroupKeySet(const GroupKeySet& other) = default;
-
-        GroupKeySet& operator=(const GroupKeySet&& other) noexcept{
-            const_cast<Key&>(module) = other.module;
+        KeyPowerSet& operator=(const KeyPowerSet&& other) noexcept{
+            const_cast<KeySet&>(module) = other.module;
             return *this;
         }
 
-        GroupKeySet& operator=(const GroupKeySet& other){
+        KeyPowerSet& operator=(const KeyPowerSet& other){
             return operator=(std::move(other));
         }
-    };
-
-    struct KeySet{
-
-        const std::variant<int, Union, Intersection> expression;
-
-        KeySet(const KeySet&) = default;
-
-        KeySet& operator=(const KeySet& other){
-            return operator=(std::move(other));
-        };
-
-        KeySet& operator=(const KeySet&& other) noexcept{
-            const_cast<std::variant<int, Union, Intersection>&>(expression) = other.expression;
-            return *this;
-        };
     };
 }

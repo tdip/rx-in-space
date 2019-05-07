@@ -9,20 +9,39 @@
 
 namespace rx::space::core{
 
-    struct SetReactiveSpace{
-        const IReactiveQuerySpacePtr space;
+    class IReactiveSpace;
+
+    using IReactiveSpacePtr = std::shared_ptr<IReactiveSpace>;
+
+    struct SetMember{
+        const ReactiveMemberValueStream member;
     };
 
-    struct DeleteValue{};
+    struct DeleteMember{};
 
-    typedef std::variant<SetReactiveSpace, DeleteValue> Operation;
+    typedef std::variant<SetMember, DeleteMember> MemberOperation;
 
-    struct Update{
-        Key setId;
-        Operation operation;
+    struct MemberUpdate{
+        KeySet key;
+        MemberOperation operation;
     };
 
-    typedef std::vector<Update> ReactiveUpdates;
+    typedef std::vector<MemberUpdate> MemberUpdates;
+
+    struct SetSpace{
+        const IReactiveSpacePtr space;
+    };
+
+    struct DeleteSpace{};
+
+    typedef std::variant<SetSpace, DeleteSpace> SpaceOperation;
+
+    struct SpaceUpdate{
+        KeyPowerSet subspace;
+        SpaceOperation operation;
+    };
+
+    typedef std::vector<SpaceUpdate> SpaceUpdates;
 
     /**
      * Interface for a reactive query space that has
@@ -30,8 +49,19 @@ namespace rx::space::core{
      */
     class IReactiveSpace : public IReactiveQuerySpace{
     public:
-        virtual std::optional<exceptions::UpdateException> update(const ReactiveUpdates&) = 0;
-    };
 
-    using IReactiveSpacePtr = std::shared_ptr<IReactiveSpace>;
+        /**
+         * Update a single reactive member to output the values produced
+         * by the given stream.
+         */
+        virtual std::optional<exceptions::UpdateException> update(const MemberUpdates&) = 0;
+
+        /**
+         * Modifies the reactive space such that the given subsets of keys will
+         * now be considered members of the new space. This implies that queries
+         * selecting members of the given subsets will be handled by the given
+         * reactive space.
+         */
+        virtual std::optional<exceptions::UpdateException> update(const SpaceUpdates&) = 0;
+    };
 }

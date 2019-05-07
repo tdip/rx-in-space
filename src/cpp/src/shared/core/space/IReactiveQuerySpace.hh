@@ -26,13 +26,14 @@ namespace rx::space::core{
          * Get an observable to all the values of the set matching
          * the given identifier.
          */
-        virtual ReactiveMemberValueStream query(const KeySet&) = 0;
+        virtual ReactiveMemberValueStream query(const KeyPowerSet&) = 0;
 
         /**
-         * Split the reactive space into a subspace containing only
-         * the members corresponding to the given set.
+         * Get a reacitve space that immitates the behavior of
+         * this space for the keys belonging to the given
+         * power set.
          */
-        //virtual IReactiveQuerySpacePtr link(const core::PowerSetIdentifier&) = 0;
+        virtual IReactiveQuerySpacePtr link(const KeyPowerSet&) = 0;
 
         virtual ~IReactiveQuerySpace() = default;
     };
